@@ -3,6 +3,7 @@ const userRouter = express.Router()
 const bcrypt = require('bcryptjs')
 const login = require('../models/loginData')
 const user = require('../models/userData')
+const register = require('../models/userData')
 const charging = require('../models/chargingStationData')
 const service = require('../models/serviceStationData')
 const checkAuth = require("../middleware/check-auth");
