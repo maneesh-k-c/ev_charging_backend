@@ -273,7 +273,7 @@ userRouter.post('/register', async (req, res) => {
         if (oldemail) {
             return res.status(400).json({ success: false, error: true, message: "Email id already exists" });
         }
-        var log = { username: req.body.email, password: hashedPassword, role: 2, status: 1 }
+        var log = { username: req.body.username, password: hashedPassword, role: 2, status: 1 }
         const result = await login(log).save()
         var reg ={login_id: result._id, name: req.body.name,email: req.body.email,phone_no: req.body.phone_no,location: req.body.location,address: req.body.address,} 
         const result2 = await register(reg).save()
