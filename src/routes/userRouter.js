@@ -154,6 +154,7 @@ userRouter.post('/battery-shop-register', async(req, res) => {
     console.log("data " + JSON.stringify(req.body))
     try {
         const oldUser = await login.findOne({ username: req.body.username });
+        console.log(oldUser);
         if (oldUser) {
             return res.status(400).json({ success: false, error: true, message: "User already exists" });
         }
@@ -166,9 +167,9 @@ userRouter.post('/battery-shop-register', async(req, res) => {
         if (oldemail) {
             return res.status(400).json({ success: false, error: true, message: "Email id already exists" });
         }
-        var log = { username: req.body.username, password: hashedPassword, role: 1, status: 1 }
+        var log = { username: req.body.username, password: hashedPassword, role: 4, status: 0 }
         const result = await login(log).save()
-        var reg ={login_id: result._id, name: req.body.name,email: req.body.email,phone_no: req.body.phone_no,location: req.body.location,slots: req.body.slots,} 
+        var reg ={login_id: result._id, name: req.body.name,address:req.body.address,email: req.body.email,phone_no: req.body.phone_no,location: req.body.location,slots: req.body.slots,} 
         const result2 = await battery(reg).save()
         if (result2) {
             res.status(201).json({ success: true, error: false, message: "Registration completed", details: result2 });
@@ -293,6 +294,25 @@ userRouter.post('/approve-charging-station/:id', (req, res) => {
 
 })
 
+userRouter.post('/approve-battery-shop/:id', (req, res) => {
+    const id = req.params.id
+    console.log(id);
+    login.updateOne({ _id: id }, { $set: { status: 1 } }).then((user) => {
+        console.log(user);
+        res.status(200).json({
+            success: true,
+            error: false,
+            message: "approved"
+        })
+
+    }).catch(err => {
+        return res.status(401).json({
+            message: "Something went Wrong!"
+        })
+    })
+
+})
+
 userRouter.post('/approve-service-station/:id', (req, res) => {
     const id = req.params.id
     console.log(id);
@@ -338,6 +358,23 @@ userRouter.post('/approve-service-station/:id', (req, res) => {
 
 userRouter.get('/view-charging-station', (req, res) => {
     charging.find()
+        .then((data) => {
+            res.status(200).json({
+                success: true,
+                error: false,
+                data: data
+            })
+        })
+        .catch(err => {
+            return res.status(401).json({
+                message: "something wrong"
+            })
+        })
+
+})
+
+userRouter.get('/view-battery-shop', (req, res) => {
+    battery.find()
         .then((data) => {
             res.status(200).json({
                 success: true,
