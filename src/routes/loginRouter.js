@@ -5,6 +5,7 @@ const userRegister = require('../models/userData')
 const login = require('../models/loginData')
 const cstation = require('../models/chargingStationData')
 const sstation = require('../models/serviceStationData')
+const battery = require('../models/batteryData')
 const jwt = require('jsonwebtoken')
 
 
@@ -82,6 +83,32 @@ LoginRouter.post("/", async (req, res) => {
                         login_id: oldUser._id,
                         serviceStationName: serviceDetails.name,
                         serviceStationId: serviceDetails._id,
+
+                    })
+                }
+            }
+            else {
+                res.status(200).json({
+                    success: false,
+                    error: true,
+                    login_id: oldUser._id,
+                    message: "waiting for admins approval"
+                })
+            }
+        }
+        else if (oldUser.role === '4') {
+            if (oldUser.status == "1") {
+                const serviceDetails = battery.findOne({ login_id: oldUser._id })
+                if (serviceDetails) {
+                    res.status(200).json({
+                        success: true,
+                        error: false,
+                        username: oldUser.username,
+                        role: oldUser.role,
+                        status: oldUser.status,
+                        login_id: oldUser._id,
+                        shopName: serviceDetails.name,
+                        batteryShopId: serviceDetails._id,
 
                     })
                 }
