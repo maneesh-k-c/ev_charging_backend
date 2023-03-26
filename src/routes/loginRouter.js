@@ -21,16 +21,26 @@ LoginRouter.post("/", async (req, res) => {
         if (!isPasswordCorrect) return res.status(400).json({ success: false, error: true, message: "Incorrect password" })
 
         if (oldUser.role === '1') {
-            const companyDetails = await Company.findOne({ login_id: oldUser._id })
-            if (companyDetails) {
-                return res.status(200).json({
-                    success: true,
-                    error: false,
-                    username: oldUser.username,
-                    role: oldUser.role,
-                    status: oldUser.status,
+            if (oldUser.status == "1") {
+                const chargingDetails = await cstation.findOne({ login_id: oldUser._id })
+                if (chargingDetails) {
+                    return res.status(200).json({
+                        success: true,
+                        error: false,
+                        username: oldUser.username,
+                        role: oldUser.role,
+                        status: oldUser.status,
+                        login_id: oldUser._id,
+                        chargingStationIid: chargingDetails._id
+                    })
+                }
+            }
+            else {
+                res.status(200).json({
+                    success: false,
+                    error: true,
                     login_id: oldUser._id,
-                    company_id: companyDetails._id
+                    message: "waiting for admins approval"
                 })
             }
         }
@@ -59,17 +69,33 @@ LoginRouter.post("/", async (req, res) => {
                 })
             }
         }
-        else {
+        else if (oldUser.role === '3') {
+            if (oldUser.status == "1") {
+                const serviceDetails = sstation.findOne({ login_id: oldUser._id })
+                if (serviceDetails) {
+                    res.status(200).json({
+                        success: true,
+                        error: false,
+                        username: oldUser.username,
+                        role: oldUser.role,
+                        status: oldUser.status,
+                        login_id: oldUser._id,
+                        serviceStationName: serviceDetails.name,
+                        serviceStationId: serviceDetails._id,
 
-            return res.status(200).json({
-                success: true,
-                error: false,
-                username: oldUser.username,
-                login_id: oldUser._id,
-                status: oldUser.status,
-                role: oldUser.role,
-            })
+                    })
+                }
+            }
+            else {
+                res.status(200).json({
+                    success: false,
+                    error: true,
+                    login_id: oldUser._id,
+                    message: "waiting for admins approval"
+                })
+            }
         }
+       
     } catch (error) {
         res.status(500).json({ message: "Something went wrong" })
     }

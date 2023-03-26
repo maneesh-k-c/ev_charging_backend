@@ -6,9 +6,9 @@ const ServiceStationSchema = new Schema({
      login_id:{ type: Schema.Types.ObjectId, ref: "login_tb", required: true },
      name:{ type: String, required: true },
      email:{ type: String, required: true },
-     location:{ type: String, required: true },
-     contact_no:{ type: String, required: true },
-     services:{ type: String, required: true }      
+     phone_no:{ type: String, required: true },
+     address:{ type: String, required: true },
+     location:{ type: String, required: true } 
 })
 
 var ServiceStationdata = mongoose.model('service_station_tb',ServiceStationSchema) 
