@@ -317,7 +317,7 @@ userRouter.post('/approve-service-station/:id', (req, res) => {
     const id = req.params.id
     console.log(id);
     login.find({ _id: id }).then((data) => {
-        if (data.login_id === 0) {
+        if (data.status === 0) {
             login.updateOne({ _id: id }, { $set: { status: 1 } }).then((user) => {
                 console.log(user);
                 res.status(200).json({
@@ -337,7 +337,7 @@ userRouter.post('/approve-service-station/:id', (req, res) => {
                 res.status(200).json({
                     success: true,
                     error: false,
-                    message: "approved"
+                    message: "Disapproved"
                 })
 
             }).catch(err => {
