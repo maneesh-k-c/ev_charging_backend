@@ -10,6 +10,55 @@ const slot = require('../models/slotsData')
 const checkAuth = require("../middleware/check-auth");
 var objectId = require('mongodb').ObjectID;
 
+ChargeRouter.post('/add-slot', async (req, res) => {
+
+    try {
+        const oldSlot = await slot.findOne({ charging_station_id: req.body.charging_station_id });
+        if (oldSlot) {
+            if (oldSlot.slot_no === req.body.slot_no) {
+                return res.status(400).json({ success: false, error: true, message: "Slot already exists" });
+            }
+        }
+        var data = { charging_station_id: req.body.charging_station_id, slot_no: req.body.slot_no, status: 'Available' }
+        const result = await slot(data).save()
+        if (result) {
+            return res.status(200).json({ success: true, error: false, message: "Slot added" });
+        }
+    } catch (error) {
+        return res.status(400).json({ success: false, error: true, message: "Something went wrong" });
+    }
+})
+
+ChargeRouter.get('/view-slots/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        slot.find({ charging_station_id: id })
+            .then(function (data) {
+                if (data == 0) {
+                    return res.status(401).json({
+                        success: false,
+                        error: true,
+                        message: "No Data Found!"
+                    })
+                }
+                else {
+                    return res.status(200).json({
+                        success: true,
+                        error: false,
+                        data: data
+                    })
+                }
+            })
+    } catch (error) {
+        return res.status(200).json({
+            success: true,
+            error: false,
+            message: "Something went wrong"
+        })
+    }
+
+
+})
 
 ChargeRouter.get('/view-single-charging-station/:id', (req, res) => {
     const id = req.params.id;
@@ -33,11 +82,9 @@ ChargeRouter.get('/view-single-charging-station/:id', (req, res) => {
 
 })
 
-
-
 ChargeRouter.get('/charging-stations-bookings/:id', (req, res) => {
-   const id = req.params.id;
-    
+    const id = req.params.id;
+
     booking.aggregate([{
         '$lookup': {
             'from': 'charging_station_tbs',
@@ -113,84 +160,84 @@ ChargeRouter.get('/charging-stations-bookings/:id', (req, res) => {
 
 ChargeRouter.get('/charging-stations-approved-bookings/:id', (req, res) => {
     const id = req.params.id;
-     
-     booking.aggregate([{
-         '$lookup': {
-             'from': 'charging_station_tbs',
-             'localField': 'charging_station_id',
-             'foreignField': '_id',
-             'as': 'station'
-         }
-     }, {
-         '$lookup': {
-             'from': 'slot_tbs',
-             'localField': '_id',
-             'foreignField': 'booking_id',
-             'as': 'slot'
-         }
-     }, {
-         '$lookup': {
-             'from': 'user_tbs',
-             'localField': 'login_id',
-             'foreignField': 'login_id',
-             'as': 'user'
-         }
-     },
-     {
-         "$unwind": "$station"
-     },
-     {
-         "$unwind": "$slot"
-     },
-     {
-         "$unwind": "$user"
-     },
-     {
-         "$match": {
-             "charging_station_id": objectId(id),
-         }
-     },
-     {
-         "$match": {
-             "status": "1"
-         }
-     },
-     {
-         "$group": {
-             "_id": "$_id",
-             "vehicle_number": { "$first": "$vehicle_number" },
-             "amount": { "$first": "$amount" },
-             "status": { "$first": "$status" },
-             "vehicle_model": { "$first": "$vehicle_model" },
-             "slot_no": { "$first": "$slot.slot_no" },
-             "time": { "$first": "$slot.time" },
-             "date": { "$first": "$slot.date" },
-             "name": { "$first": "$user.name" },
-             "phone_no": { "$first": "$user.phone_no" },
- 
-         }
-     }
- 
- 
-     ])
-         .then(function (data) {
-             if (data == 0) {
-                 return res.status(401).json({
-                     success: false,
-                     error: true,
-                     message: "No Data Found!"
-                 })
-             }
-             else {
-                 return res.status(200).json({
-                     success: true,
-                     error: false,
-                     data: data
-                 })
-             }
-         })
- 
- })
+
+    booking.aggregate([{
+        '$lookup': {
+            'from': 'charging_station_tbs',
+            'localField': 'charging_station_id',
+            'foreignField': '_id',
+            'as': 'station'
+        }
+    }, {
+        '$lookup': {
+            'from': 'slot_tbs',
+            'localField': '_id',
+            'foreignField': 'booking_id',
+            'as': 'slot'
+        }
+    }, {
+        '$lookup': {
+            'from': 'user_tbs',
+            'localField': 'login_id',
+            'foreignField': 'login_id',
+            'as': 'user'
+        }
+    },
+    {
+        "$unwind": "$station"
+    },
+    {
+        "$unwind": "$slot"
+    },
+    {
+        "$unwind": "$user"
+    },
+    {
+        "$match": {
+            "charging_station_id": objectId(id),
+        }
+    },
+    {
+        "$match": {
+            "status": "1"
+        }
+    },
+    {
+        "$group": {
+            "_id": "$_id",
+            "vehicle_number": { "$first": "$vehicle_number" },
+            "amount": { "$first": "$amount" },
+            "status": { "$first": "$status" },
+            "vehicle_model": { "$first": "$vehicle_model" },
+            "slot_no": { "$first": "$slot.slot_no" },
+            "time": { "$first": "$slot.time" },
+            "date": { "$first": "$slot.date" },
+            "name": { "$first": "$user.name" },
+            "phone_no": { "$first": "$user.phone_no" },
+
+        }
+    }
+
+
+    ])
+        .then(function (data) {
+            if (data == 0) {
+                return res.status(401).json({
+                    success: false,
+                    error: true,
+                    message: "No Data Found!"
+                })
+            }
+            else {
+                return res.status(200).json({
+                    success: true,
+                    error: false,
+                    data: data
+                })
+            }
+        })
+
+})
 
 ChargeRouter.post('/slot-booking', (req, res) => {
     console.log("data " + JSON.stringify(req.body))
@@ -253,218 +300,218 @@ ChargeRouter.post('/slot-booking', (req, res) => {
 ChargeRouter.get('/update-booking-status/:id', (req, res) => {
     const id = req.params.id
     console.log(id);
-    booking.updateOne(  { _id:id} , { $set: { status : 1  } } ).then((user)=>{
+    booking.updateOne({ _id: id }, { $set: { status: 1 } }).then((user) => {
         console.log(user);
         res.status(200).json({
-            success:true,
-            error:false,
-            message:"status updated"
+            success: true,
+            error: false,
+            message: "status updated"
         })
-        
+
     }).catch(err => {
         return res.status(401).json({
             message: "Something went Wrong!"
         })
     })
- 
+
 })
 
 ChargeRouter.get('/cancel-booking/:id', (req, res) => {
     const id = req.params.id
     console.log(id);
-    booking.deleteOne({ _id:id}).then(()=>{
-        slot.deleteOne({ booking_id: id }).then(()=>{
+    booking.deleteOne({ _id: id }).then(() => {
+        slot.deleteOne({ booking_id: id }).then(() => {
             res.status(200).json({
-                success:true,
-                error:false,
-                message:"Booking Canceled"
+                success: true,
+                error: false,
+                message: "Booking Canceled"
             })
-        })    
+        })
     }).catch(err => {
         return res.status(401).json({
             message: "Something went Wrong!"
         })
     })
- 
+
 })
 
 ChargeRouter.get('/update-charging-complete-status/:id', (req, res) => {
     const id = req.params.id
     console.log(id);
-    booking.updateOne(  { _id:id} , { $set: { status : 2  } } ).then((user)=>{
+    booking.updateOne({ _id: id }, { $set: { status: 2 } }).then((user) => {
         console.log(user);
         res.status(200).json({
-            success:true,
-            error:false,
-            message:"status updated"
+            success: true,
+            error: false,
+            message: "status updated"
         })
-        
+
     }).catch(err => {
         return res.status(401).json({
             message: "Something went Wrong!"
         })
     })
- 
+
 })
 
 ChargeRouter.get('/charging-stations-completed-charging/:id', (req, res) => {
     const id = req.params.id;
-     
-     booking.aggregate([{
-         '$lookup': {
-             'from': 'charging_station_tbs',
-             'localField': 'charging_station_id',
-             'foreignField': '_id',
-             'as': 'station'
-         }
-     }, {
-         '$lookup': {
-             'from': 'slot_tbs',
-             'localField': '_id',
-             'foreignField': 'booking_id',
-             'as': 'slot'
-         }
-     }, {
-         '$lookup': {
-             'from': 'user_tbs',
-             'localField': 'login_id',
-             'foreignField': 'login_id',
-             'as': 'user'
-         }
-     },
-     {
-         "$unwind": "$station"
-     },
-     {
-         "$unwind": "$slot"
-     },
-     {
-         "$unwind": "$user"
-     },
-     {
-         "$match": {
-             "charging_station_id": objectId(id),
-         }
-     },
-     {
-         "$match": {
-             "status": "2"
-         }
-     },
-     {
-         "$group": {
-             "_id": "$_id",
-             "vehicle_number": { "$first": "$vehicle_number" },
-             "amount": { "$first": "$amount" },
-             "status": { "$first": "$status" },
-             "vehicle_model": { "$first": "$vehicle_model" },
-             "slot_no": { "$first": "$slot.slot_no" },
-             "time": { "$first": "$slot.time" },
-             "date": { "$first": "$slot.date" },
-             "name": { "$first": "$user.name" },
-             "phone_no": { "$first": "$user.phone_no" },
- 
-         }
-     }
- 
- 
-     ])
-         .then(function (data) {
-             if (data == 0) {
-                 return res.status(401).json({
-                     success: false,
-                     error: true,
-                     message: "No Data Found!"
-                 })
-             }
-             else {
-                 return res.status(200).json({
-                     success: true,
-                     error: false,
-                     data: data
-                 })
-             }
-         })
- 
- })
 
- ChargeRouter.get('/user-charging-booked-details/:id', (req, res) => {
+    booking.aggregate([{
+        '$lookup': {
+            'from': 'charging_station_tbs',
+            'localField': 'charging_station_id',
+            'foreignField': '_id',
+            'as': 'station'
+        }
+    }, {
+        '$lookup': {
+            'from': 'slot_tbs',
+            'localField': '_id',
+            'foreignField': 'booking_id',
+            'as': 'slot'
+        }
+    }, {
+        '$lookup': {
+            'from': 'user_tbs',
+            'localField': 'login_id',
+            'foreignField': 'login_id',
+            'as': 'user'
+        }
+    },
+    {
+        "$unwind": "$station"
+    },
+    {
+        "$unwind": "$slot"
+    },
+    {
+        "$unwind": "$user"
+    },
+    {
+        "$match": {
+            "charging_station_id": objectId(id),
+        }
+    },
+    {
+        "$match": {
+            "status": "2"
+        }
+    },
+    {
+        "$group": {
+            "_id": "$_id",
+            "vehicle_number": { "$first": "$vehicle_number" },
+            "amount": { "$first": "$amount" },
+            "status": { "$first": "$status" },
+            "vehicle_model": { "$first": "$vehicle_model" },
+            "slot_no": { "$first": "$slot.slot_no" },
+            "time": { "$first": "$slot.time" },
+            "date": { "$first": "$slot.date" },
+            "name": { "$first": "$user.name" },
+            "phone_no": { "$first": "$user.phone_no" },
+
+        }
+    }
+
+
+    ])
+        .then(function (data) {
+            if (data == 0) {
+                return res.status(401).json({
+                    success: false,
+                    error: true,
+                    message: "No Data Found!"
+                })
+            }
+            else {
+                return res.status(200).json({
+                    success: true,
+                    error: false,
+                    data: data
+                })
+            }
+        })
+
+})
+
+ChargeRouter.get('/user-charging-booked-details/:id', (req, res) => {
     const id = req.params.id;
-     
-     booking.aggregate([{
-         '$lookup': {
-             'from': 'charging_station_tbs',
-             'localField': 'charging_station_id',
-             'foreignField': '_id',
-             'as': 'station'
-         }
-     }, {
-         '$lookup': {
-             'from': 'slot_tbs',
-             'localField': '_id',
-             'foreignField': 'booking_id',
-             'as': 'slot'
-         }
-     }, {
-         '$lookup': {
-             'from': 'user_tbs',
-             'localField': 'login_id',
-             'foreignField': 'login_id',
-             'as': 'user'
-         }
-     },
-     {
-         "$unwind": "$station"
-     },
-     {
-         "$unwind": "$slot"
-     },
-     {
-         "$unwind": "$user"
-     },
-     {
-         "$match": {
-             "user.login_id": objectId(id),
-         }
-     },
-    
-     {
-         "$group": {
-             "_id": "$_id",
-             "Station_name": { "$first": "$station.name" },
-             "Station_location": { "$first": "$station.location" },
-             "contact_no": { "$first": "$station.contact_no" },
-             "slot_no": { "$first": "$slot.slot_no" },
-             "time": { "$first": "$slot.time" },
-             "date": { "$first": "$slot.date" },
-             "amount": { "$first": "$amount" },
-             "status": { "$first": "$status" },
-            
-         }
-     }
- 
- 
-     ])
-         .then(function (data) {
-             if (data == 0) {
-                 return res.status(401).json({
-                     success: false,
-                     error: true,
-                     message: "No Data Found!"
-                 })
-             }
-             else {
-                 return res.status(200).json({
-                     success: true,
-                     error: false,
-                     data: data
-                 })
-             }
-         })
- 
- })
 
- ChargeRouter.get('/view-booked-details-by-date/:id/:data', (req, res) => {
+    booking.aggregate([{
+        '$lookup': {
+            'from': 'charging_station_tbs',
+            'localField': 'charging_station_id',
+            'foreignField': '_id',
+            'as': 'station'
+        }
+    }, {
+        '$lookup': {
+            'from': 'slot_tbs',
+            'localField': '_id',
+            'foreignField': 'booking_id',
+            'as': 'slot'
+        }
+    }, {
+        '$lookup': {
+            'from': 'user_tbs',
+            'localField': 'login_id',
+            'foreignField': 'login_id',
+            'as': 'user'
+        }
+    },
+    {
+        "$unwind": "$station"
+    },
+    {
+        "$unwind": "$slot"
+    },
+    {
+        "$unwind": "$user"
+    },
+    {
+        "$match": {
+            "user.login_id": objectId(id),
+        }
+    },
+
+    {
+        "$group": {
+            "_id": "$_id",
+            "Station_name": { "$first": "$station.name" },
+            "Station_location": { "$first": "$station.location" },
+            "contact_no": { "$first": "$station.contact_no" },
+            "slot_no": { "$first": "$slot.slot_no" },
+            "time": { "$first": "$slot.time" },
+            "date": { "$first": "$slot.date" },
+            "amount": { "$first": "$amount" },
+            "status": { "$first": "$status" },
+
+        }
+    }
+
+
+    ])
+        .then(function (data) {
+            if (data == 0) {
+                return res.status(401).json({
+                    success: false,
+                    error: true,
+                    message: "No Data Found!"
+                })
+            }
+            else {
+                return res.status(200).json({
+                    success: true,
+                    error: false,
+                    data: data
+                })
+            }
+        })
+
+})
+
+ChargeRouter.get('/view-booked-details-by-date/:id/:data', (req, res) => {
     const id = req.params.id;
     const date = req.params.data;
     booking.aggregate([{
@@ -516,7 +563,7 @@ ChargeRouter.get('/charging-stations-completed-charging/:id', (req, res) => {
 
 
     ])
-    .then(function (data) {
+        .then(function (data) {
             if (data == 0) {
                 return res.status(401).json({
                     success: false,
@@ -550,7 +597,7 @@ ChargeRouter.get('/check-slot-availability/:id/:slot/:time', (req, res) => {
     {
         "$unwind": "$slot"
     },
-   
+
     {
         "$match": {
             "charging_station_id": objectId(id),
@@ -582,7 +629,7 @@ ChargeRouter.get('/check-slot-availability/:id/:slot/:time', (req, res) => {
 
 
     ])
-    .then(function (data) {
+        .then(function (data) {
             if (data == 0) {
                 return res.status(200).json({
                     success: true,
@@ -594,7 +641,7 @@ ChargeRouter.get('/check-slot-availability/:id/:slot/:time', (req, res) => {
                 return res.status(401).json({
                     success: false,
                     error: true,
-                    message:"Slot is busy"
+                    message: "Slot is busy"
                 })
             }
         })
@@ -603,7 +650,7 @@ ChargeRouter.get('/check-slot-availability/:id/:slot/:time', (req, res) => {
 
 ChargeRouter.get('/search/:id', (req, res) => {
     const locations = req.params.id
-   
+
 
     // let searchData = {
     //     location: req.body.location,
@@ -611,7 +658,7 @@ ChargeRouter.get('/search/:id', (req, res) => {
     if (locations) {
 
 
-        charging.find({location: new RegExp('.*' + locations.toLowerCase() + '.*')})
+        charging.find({ location: new RegExp('.*' + locations.toLowerCase() + '.*') })
             .then((data) => {
 
                 res.status(200).json({
@@ -644,9 +691,9 @@ ChargeRouter.get('/search/:id', (req, res) => {
 })
 
 ChargeRouter.get('/charging-station-profile/:id', (req, res) => {
-    const id =req.params.id
-    charging.find({login_id : id})
-    .then(function (data) {
+    const id = req.params.id
+    charging.find({ login_id: id })
+        .then(function (data) {
             if (data == 0) {
                 return res.status(401).json({
                     success: false,

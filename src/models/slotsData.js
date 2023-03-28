@@ -3,10 +3,10 @@ mongoose.connect('mongodb://userone:userone@database-shard-00-00.wkagg.mongodb.n
 const Schema = mongoose.Schema  
 
 const SlotSchema = new Schema({
-     booking_id:{ type: Schema.Types.ObjectId, ref: "booking_tb", required: true },
+     charging_station_id:{ type: Schema.Types.ObjectId, ref: "charging_station_tb", required: true },
      slot_no:{ type: String, required: true },
-     time:{ type: String, required: true },      
-     date:{ type: String, required: true },      
+     status:{ type: String, required: true },      
+       
 })
 
 var Slotdata = mongoose.model('slot_tb',SlotSchema) 

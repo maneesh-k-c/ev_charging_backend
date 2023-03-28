@@ -135,7 +135,7 @@ userRouter.post('/charging-station-register', async(req, res) => {
         if (oldemail) {
             return res.status(400).json({ success: false, error: true, message: "Email id already exists" });
         }
-        var log = { username: req.body.username, password: hashedPassword, role: 1, status: 1 }
+        var log = { username: req.body.username, password: hashedPassword, role: 1, status: 0 }
         const result = await login(log).save()
         var reg ={login_id: result._id, name: req.body.name,email: req.body.email,phone_no: req.body.phone_no,address: req.body.address,location: req.body.location,slots: req.body.slots,} 
         const result2 = await charging(reg).save()
