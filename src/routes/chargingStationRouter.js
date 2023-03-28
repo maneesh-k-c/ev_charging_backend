@@ -33,6 +33,8 @@ ChargeRouter.get('/view-single-charging-station/:id', (req, res) => {
 
 })
 
+
+
 ChargeRouter.get('/charging-stations-bookings/:id', (req, res) => {
    const id = req.params.id;
     
