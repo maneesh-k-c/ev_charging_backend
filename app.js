@@ -6,6 +6,7 @@ const UserRouter = require('./src/routes/userRouter')
 const LoginRouter = require('./src/routes/loginRouter')
 const ServiceRouter = require('./src/routes/serviceStationRouter')
 const ChargingRouter = require('./src/routes/chargingStationRouter')
+const BatteryRouter = require('./src/routes/batteryRouter')
 
 
 app.use(express.json())   //convert to json
@@ -31,6 +32,7 @@ app.use('/api/user',UserRouter)
 app.use('/api/login',LoginRouter)
 app.use('/api/station',ServiceRouter)
 app.use('/api/charging',ChargingRouter)
+app.use('/api/battery',BatteryRouter)
 
 
 
