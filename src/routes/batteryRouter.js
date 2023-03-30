@@ -1,13 +1,12 @@
 const express = require('express')
 const batteryRouter = express.Router()
 const bcrypt = require('bcryptjs')
-const battery = require('../models/batteryData')
 const batteryDetails = require('../models/batteryDetailsData')
 
 
-batteryRouter.get('/view-user-profile/:id', (req, res) => {
+batteryRouter.get('/view-battery/:id', (req, res) => {
     const id = req.params.id
-    user.find({ login_id: id })
+    batteryDetails.find({ battery_shop_id: id })
         .then(function (data) {
             if (data == 0) {
                 return res.status(401).json({
@@ -21,6 +20,50 @@ batteryRouter.get('/view-user-profile/:id', (req, res) => {
                     success: true,
                     error: false,
                     data: data
+                })
+            }
+        })
+
+})
+
+batteryRouter.get('/view-single-battery/:id', (req, res) => {
+    const id = req.params.id
+    batteryDetails.find({ _id: id })
+        .then(function (data) {
+            if (data == 0) {
+                return res.status(401).json({
+                    success: false,
+                    error: true,
+                    message: "No Data Found!"
+                })
+            }
+            else {
+                return res.status(200).json({
+                    success: true,
+                    error: false,
+                    data: data
+                })
+            }
+        })
+
+})
+
+batteryRouter.get('/delete-battery/:id', (req, res) => {
+    const id = req.params.id
+    batteryDetails.deleteOne({ _id: id })
+        .then(function (data) {
+            if (!data) {
+                return res.status(401).json({
+                    success: false,
+                    error: true,
+                    message: "Something went wrong!"
+                })
+            }
+            else {
+                return res.status(200).json({
+                    success: true,
+                    error: false,
+                    message: "Battery deleted"
                 })
             }
         })

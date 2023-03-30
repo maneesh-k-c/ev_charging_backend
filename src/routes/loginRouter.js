@@ -47,7 +47,7 @@ LoginRouter.post("/", async (req, res) => {
         }
         else if (oldUser.role === '2') {
             if (oldUser.status == "1") {
-                const userDetails = userRegister.findOne({ login_id: oldUser._id })
+                const userDetails = await userRegister.findOne({ login_id: oldUser._id })
                 if (userDetails) {
                     res.status(200).json({
                         success: true,
@@ -72,7 +72,7 @@ LoginRouter.post("/", async (req, res) => {
         }
         else if (oldUser.role === '3') {
             if (oldUser.status == "1") {
-                const serviceDetails = sstation.findOne({ login_id: oldUser._id })
+                const serviceDetails = await sstation.findOne({ login_id: oldUser._id })
                 if (serviceDetails) {
                     res.status(200).json({
                         success: true,
@@ -98,7 +98,8 @@ LoginRouter.post("/", async (req, res) => {
         }
         else if (oldUser.role === '4') {
             if (oldUser.status == "1") {
-                const serviceDetails = battery.findOne({ login_id: oldUser._id })
+                const serviceDetails = await battery.findOne({ login_id: oldUser._id })
+                console.log(serviceDetails);
                 if (serviceDetails) {
                     res.status(200).json({
                         success: true,

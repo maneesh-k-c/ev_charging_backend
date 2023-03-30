@@ -6,9 +6,51 @@ const user = require('../models/userData')
 const charging = require('../models/chargingStationData')
 const service = require('../models/serviceStationData')
 const booking = require('../models/serviceBookingData')
+const services = require('../models/serviceData')
 const checkAuth=require("../middleware/check-auth");
 var objectId = require('mongodb').ObjectID;
 
+
+serviceRouter.post('/add-service', async(req, res) => {
+ 
+    try {
+        const {service_name,amount,service_station_id,duration} = req.body
+        const oldData = await services.findOne({ service_name: service_name });
+        if (oldData) {
+            return res.status(400).json({ success: false, error: true, message: "Service already exists" });
+        }
+        const result = await services.create({service_name,amount,service_station_id,duration})
+        if (result) {
+            res.status(201).json({ success: true, error: false, message: "Service Added", details: result });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, error: true, message: "Something went wrong" });
+        console.log(error);
+    }
+
+})
+
+serviceRouter.get('/view-services/:id', (req, res) => {
+    const id = req.params.id;
+    services.find({service_station_id: id})
+    .then(function (data) {
+            if (data == 0) {
+                return res.status(401).json({
+                    success: false,
+                    error: true,
+                    message: "No Data Found!"
+                })
+            }
+            else {
+                return res.status(200).json({
+                    success: true,
+                    error: false,
+                    data: data
+                })
+            }
+        })
+
+})
 
 serviceRouter.get('/view-single-station/:id', (req, res) => {
     const id = req.params.id;
