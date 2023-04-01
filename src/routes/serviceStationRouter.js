@@ -52,6 +52,53 @@ serviceRouter.get('/view-services/:id', (req, res) => {
 
 })
 
+serviceRouter.get('/delete-services/:id', (req, res) => {
+    const id = req.params.id
+    services.deleteOne({ _id: id })
+        .then(function (data) {
+            if (!data) {
+                return res.status(401).json({
+                    success: false,
+                    error: true,
+                    message: "Something went wrong!"
+                })
+            }
+            else {
+                return res.status(200).json({
+                    success: true,
+                    error: false,
+                    message: "Service deleted"
+                })
+            }
+        })
+
+})
+
+serviceRouter.get('/update-service/:id', (req, res) => {
+    const {service_name,amount,duration} = req.body
+    const id = req.params.id
+    console.log(id);
+    services.updateOne({ _id: id }, { $set: {service_name,amount,duration} }).then((data) => {
+        console.log(data);
+        res.status(200).json({
+            success: true,
+            error: false,
+            message: "Service updated"
+        })
+
+    }).catch(err => {
+        return res.status(401).json({
+            message: "Something went Wrong!"
+        })
+    })
+
+})
+
+
+
+
+
+
 serviceRouter.get('/view-single-station/:id', (req, res) => {
     const id = req.params.id;
     service.find({_id: id})
