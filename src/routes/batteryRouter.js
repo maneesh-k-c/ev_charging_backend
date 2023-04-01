@@ -3,6 +3,25 @@ const batteryRouter = express.Router()
 const bcrypt = require('bcryptjs')
 const batteryDetails = require('../models/batteryDetailsData')
 
+batteryRouter.get('/update-battery/:id', (req, res) => {
+    const {vehicle_name,model_name,capacity,amount} = req.body
+    const id = req.params.id
+    console.log(id);
+    booking.updateOne({ _id: id }, { $set: {vehicle_name,model_name,capacity,amount} }).then((data) => {
+        console.log(data);
+        res.status(200).json({
+            success: true,
+            error: false,
+            message: "Battery updated"
+        })
+
+    }).catch(err => {
+        return res.status(401).json({
+            message: "Something went Wrong!"
+        })
+    })
+
+})
 
 batteryRouter.get('/view-battery/:id', (req, res) => {
     const id = req.params.id
