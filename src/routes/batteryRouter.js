@@ -75,7 +75,7 @@ batteryRouter.post('/add-battery', async(req, res) => {
  
     try {
         const {vehicle_name,model_name,capacity,amount,battery_shop_id} = req.body
-        const oldData = await batteryDetails.findOne({ vehicle_name: vehicle_name });
+        const oldData = await batteryDetails.findOne({ model_name: model_name });
         if (oldData) {
             return res.status(400).json({ success: false, error: true, message: "Name already exists" });
         }
