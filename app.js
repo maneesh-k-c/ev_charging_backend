@@ -7,6 +7,11 @@ const LoginRouter = require('./src/routes/loginRouter')
 const ServiceRouter = require('./src/routes/serviceStationRouter')
 const ChargingRouter = require('./src/routes/chargingStationRouter')
 const BatteryRouter = require('./src/routes/batteryRouter')
+const AdminRouter = require('./src/routes/adminRouter')
+
+app.use(express.static('./public'));
+app.set('views', './src/views')
+app.set('view engine', 'ejs')
 
 
 app.use(express.json())   //convert to json
@@ -33,9 +38,10 @@ app.use('/api/login',LoginRouter)
 app.use('/api/station',ServiceRouter)
 app.use('/api/charging',ChargingRouter)
 app.use('/api/battery',BatteryRouter)
+app.use('/admin',AdminRouter)
 
 
 
 app.listen(8000,()=>{
-    console.log('server started at port 8000')
+    console.log('server started at port http://localhost:8000')
 })
