@@ -7,7 +7,7 @@ batteryRouter.get('/update-battery/:id', (req, res) => {
     const {vehicle_name,model_name,capacity,amount} = req.body
     const id = req.params.id
     console.log(id);
-    booking.updateOne({ _id: id }, { $set: {vehicle_name,model_name,capacity,amount} }).then((data) => {
+    batteryDetails.updateOne({ _id: id }, { $set: {vehicle_name,model_name,capacity,amount} }).then((data) => {
         console.log(data);
         res.status(200).json({
             success: true,
