@@ -53,6 +53,72 @@ userRouter.get('/view-user-profile/:id', (req, res) => {
 
 })
 
+userRouter.get('/view-charging-station-profile/:id', (req, res) => {
+    const id = req.params.id
+    charging.find({ login_id: id })
+        .then(function (data) {
+            if (data == 0) {
+                return res.status(401).json({
+                    success: false,
+                    error: true,
+                    message: "No Data Found!"
+                })
+            }
+            else {
+                return res.status(200).json({
+                    success: true,
+                    error: false,
+                    data: data
+                })
+            }
+        })
+
+})
+
+userRouter.get('/view-battery-shop-profile/:id', (req, res) => {
+    const id = req.params.id
+    battery.find({ login_id: id })
+        .then(function (data) {
+            if (data == 0) {
+                return res.status(401).json({
+                    success: false,
+                    error: true,
+                    message: "No Data Found!"
+                })
+            }
+            else {
+                return res.status(200).json({
+                    success: true,
+                    error: false,
+                    data: data
+                })
+            }
+        })
+
+})
+
+userRouter.get('/view-service-station-profile/:id', (req, res) => {
+    const id = req.params.id
+    service.find({ login_id: id })
+        .then(function (data) {
+            if (data == 0) {
+                return res.status(401).json({
+                    success: false,
+                    error: true,
+                    message: "No Data Found!"
+                })
+            }
+            else {
+                return res.status(200).json({
+                    success: true,
+                    error: false,
+                    data: data
+                })
+            }
+        })
+
+})
+
 userRouter.get('/admin-view-user', (req, res) => {
     login.aggregate([{
         '$lookup': {

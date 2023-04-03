@@ -74,11 +74,11 @@ serviceRouter.get('/delete-services/:id', (req, res) => {
 
 })
 
-serviceRouter.get('/update-service/:id', (req, res) => {
+serviceRouter.post('/update-service/:id', (req, res) => {
     const {service_name,amount,duration} = req.body
     const id = req.params.id
     console.log(id);
-    services.updateOne({ _id: id }, { $set: {service_name,amount,duration} }).then((data) => {
+    service.updateOne({ _id: id }, { $set: {service_name,amount,duration} }).then((data) => {
         console.log(data);
         res.status(200).json({
             success: true,
