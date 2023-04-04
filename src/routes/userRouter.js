@@ -31,6 +31,46 @@ userRouter.post('/update-battery-shop/:id', (req, res) => {
 
 })
 
+userRouter.post('/update-charging-station/:id', (req, res) => { 
+    const {name,address,email,phone_no,location} = req.body
+    const id = req.params.id
+    console.log(id);
+    charging.updateOne({ _id: id }, { $set: {name,address,email,phone_no,location} }).then((data) => {
+        console.log(data);
+        res.status(200).json({
+            success: true,
+            error: false,
+            message: "Details updated"
+        })
+
+    }).catch(err => {
+        return res.status(401).json({
+            message: "Something went Wrong!"
+        })
+    })
+
+})
+
+userRouter.post('/update-service-station/:id', (req, res) => { 
+    const {name,address,email,phone_no,location} = req.body
+    const id = req.params.id
+    console.log(id);
+    service.updateOne({ _id: id }, { $set: {name,address,email,phone_no,location} }).then((data) => {
+        console.log(data);
+        res.status(200).json({
+            success: true,
+            error: false,
+            message: "Details updated"
+        })
+
+    }).catch(err => {
+        return res.status(401).json({
+            message: "Something went Wrong!"
+        })
+    })
+
+})
+
 userRouter.post('/update-user-profile/:id', (req, res) => { 
     const {name,address,email,phone_no,location} = req.body
     const id = req.params.id
