@@ -1,14 +1,106 @@
 const express = require('express')
 const ChargeRouter = express.Router()
-const bcrypt = require('bcryptjs')
-const login = require('../models/loginData')
-const user = require('../models/userData')
 const charging = require('../models/chargingStationData')
-const service = require('../models/serviceStationData')
 const booking = require('../models/bookingData')
 const slot = require('../models/slotsData')
-const checkAuth = require("../middleware/check-auth");
 var objectId = require('mongodb').ObjectID;
+
+ChargeRouter.post('/slot-booking', async(req, res) => {
+
+    let bookingData = {
+        login_id: req.body.login_id,
+        charging_station_id: req.body.charging_station_id,
+        date: req.body.date,
+        slot_no: req.body.slot_no,
+        time: req.body.time,
+        status: 0,
+        amount: req.body.amount
+    }
+
+
+    try{
+        const oldData = await booking.findOne({ time: req.body.time,status:0 });
+        console.log(oldData);
+        if (oldData) {
+            return res.status(400).json({ success: false, error: true, message: "Time not available" });
+        }
+        const result = await booking(bookingData).save()
+        if (result) {
+            res.status(201).json({ success: true, error: false, message: "slot booked ", details: result });
+        }
+    }catch(err) {
+            res.status(401).json({
+                success: false,
+                error: true,
+                data: err,
+                message: 'something went wrong'
+            })
+        }
+    
+})
+
+ChargeRouter.get('/view-booked-slots-charging-station/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        booking.find({ charging_station_id: id })
+            .then(function (data) {
+                if (data == 0) {
+                    return res.status(401).json({
+                        success: false,
+                        error: true,
+                        message: "No Data Found!"
+                    })
+                }
+                else {
+                    return res.status(200).json({
+                        success: true,
+                        error: false,
+                        data: data
+                    })
+                }
+            })
+    } catch (error) {
+        return res.status(200).json({
+            success: true,
+            error: false,
+            message: "Something went wrong"
+        })
+    }
+
+
+})
+
+ChargeRouter.get('/view-booked-slots-user/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        booking.find({ login_id: id })
+            .then(function (data) {
+                if (data == 0) {
+                    return res.status(401).json({
+                        success: false,
+                        error: true,
+                        message: "No Data Found!"
+                    })
+                }
+                else {
+                    return res.status(200).json({
+                        success: true,
+                        error: false,
+                        data: data
+                    })
+                }
+            })
+    } catch (error) {
+        return res.status(200).json({
+            success: true,
+            error: false,
+            message: "Something went wrong"
+        })
+    }
+
+
+})
+
 
 ChargeRouter.post('/add-slot', async (req, res) => {
 
@@ -239,63 +331,7 @@ ChargeRouter.get('/charging-stations-approved-bookings/:id', (req, res) => {
 
 })
 
-ChargeRouter.post('/slot-booking', (req, res) => {
-    console.log("data " + JSON.stringify(req.body))
 
-    let bookingData = {
-        login_id: req.body.login_id,
-        charging_station_id: req.body.charging_station_id,
-        vehicle_type: req.body.vehicle_type,
-        vehicle_model: req.body.vehicle_model,
-        vehicle_fuel: req.body.vehicle_fuel,
-        status: 0,
-        vehicle_number: req.body.vehicle_number,
-        amount: req.body.amount
-    }
-
-
-
-
-    var booking_item = booking(bookingData)
-    booking_item.save()
-        .then(() => {
-
-            booking.find().sort({ _id: -1 }).limit(1).then((d) => {
-
-                let slotData = {
-                    booking_id: d[0]._id,
-                    slot_no: req.body.slot_no,
-                    time: req.body.time,
-                    date: req.body.date,
-                }
-                var slot_item = slot(slotData)
-                slot_item.save().then(() => {
-                    res.status(200).json({
-                        success: true,
-                        error: false,
-                        message: 'booking success',
-                    })
-                })
-
-
-
-            })
-
-        })
-        .catch((err) => {
-            res.status(401).json({
-                success: false,
-                error: true,
-                data: err,
-                message: 'something went wrong'
-            })
-        })
-
-
-
-
-
-})
 
 ChargeRouter.get('/update-booking-status/:id', (req, res) => {
     const id = req.params.id

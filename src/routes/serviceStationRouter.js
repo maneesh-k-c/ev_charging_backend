@@ -78,7 +78,7 @@ serviceRouter.post('/update-service/:id', (req, res) => {
     const {service_name,amount,duration} = req.body
     const id = req.params.id
     console.log(id);
-    service.updateOne({ _id: id }, { $set: {service_name,amount,duration} }).then((data) => {
+    services.updateOne({ _id: id }, { $set: {service_name,amount,duration} }).then((data) => {
         console.log(data);
         res.status(200).json({
             success: true,
