@@ -108,11 +108,10 @@ serviceRouter.post('/service-booking', async(req, res) => {
     let bookingData = {
         login_id: req.body.login_id,
         service_station_id: req.body.service_station_id,
-        complaint_title: req.body.complaint_title,
-        description: req.body.description,
+        service_id: req.body.service_id,
         type_of_service: req.body.type_of_service,
         date: req.body.date,
-        time: req.body.time,
+        duration: req.body.date,
         status: 0,
         amount: req.body.amount
     }

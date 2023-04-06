@@ -9,7 +9,12 @@ batteryRouter.post('/battery-booking', async(req, res) => {
     let bookingData = {
         login_id: req.body.login_id,
         battery_id: req.body.battery_id,
-        amount: req.body.amount
+        battery_shop_id: req.body.battery_shop_id,
+        vehicle_name: req.body.vehicle_name,
+        model_name: req.body.model_name,
+        capacity: req.body.capacity,
+        amount: req.body.amount,
+        date: req.body.date
     }
 
 
@@ -64,6 +69,36 @@ batteryRouter.get('/view-booked-batteries-battery-shop/:id', async (req, res) =>
     try {
         const id = req.params.id;
         booking.find({ battery_shop_id: id })
+            .then(function (data) {
+                if (data == 0) {
+                    return res.status(401).json({
+                        success: false,
+                        error: true,
+                        message: "No Data Found!"
+                    })
+                }
+                else {
+                    return res.status(200).json({
+                        success: true,
+                        error: false,
+                        data: data
+                    })
+                }
+            })
+    } catch (error) {
+        return res.status(200).json({
+            success: true,
+            error: false,
+            message: "Something went wrong"
+        })
+    }
+
+
+})
+batteryRouter.get('/user-view-battery-booking/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        booking.find({ _id: id })
             .then(function (data) {
                 if (data == 0) {
                     return res.status(401).json({

@@ -101,7 +101,7 @@ ChargeRouter.get('/view-booked-slots-user/:id', async (req, res) => {
 
 })
 
-ChargeRouter.get('/booked-sungle-slots-user/:id', async (req, res) => {
+ChargeRouter.get('/booked-single-slots-user/:id', async (req, res) => {
     try {
         const id = req.params.id;
         booking.find({ _id: id })
