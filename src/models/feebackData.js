@@ -8,5 +8,5 @@ const FeedbackSchema = new Schema({
      feedback:{ type: String, required: true }
 })
 
-var Feedbackdata = mongoose.model('user_tb',FeedbackSchema) 
+var Feedbackdata = mongoose.model('feedback_tb',FeedbackSchema) 
 module.exports=Feedbackdata;

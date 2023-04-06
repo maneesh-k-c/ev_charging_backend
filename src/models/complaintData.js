@@ -8,5 +8,5 @@ const ComplaintSchema = new Schema({
      complaint:{ type: String, required: true }
 })
 
-var Complaintdata = mongoose.model('user_tb',ComplaintSchema) 
+var Complaintdata = mongoose.model('complaint_tb',ComplaintSchema) 
 module.exports=Complaintdata;
