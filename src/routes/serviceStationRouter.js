@@ -111,7 +111,7 @@ serviceRouter.post('/service-booking', async(req, res) => {
         service_id: req.body.service_id,
         service_name: req.body.service_name,
         date: req.body.date,
-        duration: req.body.date,
+        duration: req.body.duration,
         status: 0,
         amount: req.body.amount
     }
