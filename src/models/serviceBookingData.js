@@ -6,7 +6,7 @@ const ServiceBookingSchema = new Schema({
      login_id:{ type: Schema.Types.ObjectId, ref: "login_tb", required: true },
      service_station_id:{ type: Schema.Types.ObjectId, ref: "service_station_tb", required: true },
      service_id:{ type: Schema.Types.ObjectId, ref: "service_tb", required: true },
-     type_of_service:{ type: String, required: true },
+     service_name:{ type: String, required: true },
      date:{ type: String, required: true },
      duration:{ type: String, required: true },
      amount:{ type: String, required: true },
