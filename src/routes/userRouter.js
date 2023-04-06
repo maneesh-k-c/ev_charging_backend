@@ -7,9 +7,44 @@ const register = require('../models/userData')
 const charging = require('../models/chargingStationData')
 const service = require('../models/serviceStationData')
 const battery = require('../models/batteryData')
+
 const checkAuth = require("../middleware/check-auth");
+const Complaintdata = require('../models/complaintData')
+const Feedbackdata = require('../models/feebackData')
 var ObjectId = require('mongodb').ObjectID;
 
+
+userRouter.post('/add-complaint', async(req, res) => {
+ 
+    try {
+        const {login_id,date,complaint} = req.body
+       
+        const result = await Complaintdata.create({login_id,date,complaint})
+        if (result) {
+            res.status(201).json({ success: true, error: false, message: "Complaint Added", details: result });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, error: true, message: "Something went wrong" });
+        console.log(error);
+    }
+
+})
+
+userRouter.post('/add-feedback', async(req, res) => {
+ 
+    try {
+        const {login_id,date,feedback} = req.body
+       
+        const result = await Feedbackdata.create({login_id,date,feedback})
+        if (result) {
+            res.status(201).json({ success: true, error: false, message: "Feedback Added", details: result });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, error: true, message: "Something went wrong" });
+        console.log(error);
+    }
+
+})
 
 userRouter.post('/update-battery-shop/:id', (req, res) => { 
     const {name,address,email,phone_no,location} = req.body
