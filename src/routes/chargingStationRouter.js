@@ -101,6 +101,37 @@ ChargeRouter.get('/view-booked-slots-user/:id', async (req, res) => {
 
 })
 
+ChargeRouter.get('/booked-sungle-slots-user/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        booking.find({ _id: id })
+            .then(function (data) {
+                if (data == 0) {
+                    return res.status(401).json({
+                        success: false,
+                        error: true,
+                        message: "No Data Found!"
+                    })
+                }
+                else {
+                    return res.status(200).json({
+                        success: true,
+                        error: false,
+                        data: data
+                    })
+                }
+            })
+    } catch (error) {
+        return res.status(200).json({
+            success: true,
+            error: false,
+            message: "Something went wrong"
+        })
+    }
+
+
+})
+
 
 ChargeRouter.post('/add-slot', async (req, res) => {
 

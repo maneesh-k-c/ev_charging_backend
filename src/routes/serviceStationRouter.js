@@ -10,6 +10,134 @@ const services = require('../models/serviceData')
 const checkAuth=require("../middleware/check-auth");
 var objectId = require('mongodb').ObjectID;
 
+serviceRouter.get('/view-all-booking/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        booking.find({ login_id: id })
+            .then(function (data) {
+                if (data == 0) {
+                    return res.status(401).json({
+                        success: false,
+                        error: true,
+                        message: "No Data Found!"
+                    })
+                }
+                else {
+                    return res.status(200).json({
+                        success: true,
+                        error: false,
+                        data: data
+                    })
+                }
+            })
+    } catch (error) {
+        return res.status(200).json({
+            success: true,
+            error: false,
+            message: "Something went wrong"
+        })
+    }
+
+
+})
+
+serviceRouter.get('/booked-single-service-user/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        booking.find({ _id: id })
+            .then(function (data) {
+                if (data == 0) {
+                    return res.status(401).json({
+                        success: false,
+                        error: true,
+                        message: "No Data Found!"
+                    })
+                }
+                else {
+                    return res.status(200).json({
+                        success: true,
+                        error: false,
+                        data: data
+                    })
+                }
+            })
+    } catch (error) {
+        return res.status(200).json({
+            success: true,
+            error: false,
+            message: "Something went wrong"
+        })
+    }
+
+
+})
+
+serviceRouter.get('/view-booked-service-station/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        booking.find({ service_station_id: id })
+            .then(function (data) {
+                if (data == 0) {
+                    return res.status(401).json({
+                        success: false,
+                        error: true,
+                        message: "No Data Found!"
+                    })
+                }
+                else {
+                    return res.status(200).json({
+                        success: true,
+                        error: false,
+                        data: data
+                    })
+                }
+            })
+    } catch (error) {
+        return res.status(200).json({
+            success: true,
+            error: false,
+            message: "Something went wrong"
+        })
+    }
+
+
+})
+
+serviceRouter.post('/service-booking', async(req, res) => {
+
+    let bookingData = {
+        login_id: req.body.login_id,
+        service_station_id: req.body.service_station_id,
+        complaint_title: req.body.complaint_title,
+        description: req.body.description,
+        type_of_service: req.body.type_of_service,
+        date: req.body.date,
+        time: req.body.time,
+        status: 0,
+        amount: req.body.amount
+    }
+
+
+    try{
+        const oldData = await booking.findOne({ time: req.body.time,status:0 });
+        console.log(oldData);
+        if (oldData) {
+            return res.status(400).json({ success: false, error: true, message: "Time not available" });
+        }
+        const result = await booking(bookingData).save()
+        if (result) {
+            res.status(201).json({ success: true, error: false, message: "slot booked ", details: result });
+        }
+    }catch(err) {
+            res.status(401).json({
+                success: false,
+                error: true,
+                data: err,
+                message: 'something went wrong'
+            })
+        }
+    
+})
 
 serviceRouter.post('/add-service', async(req, res) => {
  

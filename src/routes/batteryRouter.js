@@ -2,6 +2,94 @@ const express = require('express')
 const batteryRouter = express.Router()
 const bcrypt = require('bcryptjs')
 const batteryDetails = require('../models/batteryDetailsData')
+const booking = require('../models/batteryBooking')
+
+batteryRouter.post('/battery-booking', async(req, res) => {
+
+    let bookingData = {
+        login_id: req.body.login_id,
+        battery_id: req.body.battery_id,
+        amount: req.body.amount
+    }
+
+
+    try{
+        const result = await booking(bookingData).save()
+        if (result) {
+            res.status(201).json({ success: true, error: false, message: "battery booked ", details: result });
+        }
+    }catch(err) {
+            res.status(401).json({
+                success: false,
+                error: true,
+                data: err,
+                message: 'something went wrong'
+            })
+        }
+    
+})
+
+batteryRouter.get('/battery-booked-single-view/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        booking.find({ _id: id })
+            .then(function (data) {
+                if (data == 0) {
+                    return res.status(401).json({
+                        success: false,
+                        error: true,
+                        message: "No Data Found!"
+                    })
+                }
+                else {
+                    return res.status(200).json({
+                        success: true,
+                        error: false,
+                        data: data
+                    })
+                }
+            })
+    } catch (error) {
+        return res.status(200).json({
+            success: true,
+            error: false,
+            message: "Something went wrong"
+        })
+    }
+
+
+})
+
+batteryRouter.get('/view-booked-batteries-battery-shop/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        booking.find({ battery_shop_id: id })
+            .then(function (data) {
+                if (data == 0) {
+                    return res.status(401).json({
+                        success: false,
+                        error: true,
+                        message: "No Data Found!"
+                    })
+                }
+                else {
+                    return res.status(200).json({
+                        success: true,
+                        error: false,
+                        data: data
+                    })
+                }
+            })
+    } catch (error) {
+        return res.status(200).json({
+            success: true,
+            error: false,
+            message: "Something went wrong"
+        })
+    }
+
+
+})
 
 batteryRouter.post('/update-battery/:id', (req, res) => {
     const {vehicle_name,model_name,capacity,amount} = req.body

@@ -5,7 +5,6 @@ const Schema = mongoose.Schema
 const ServiceBookingSchema = new Schema({
      login_id:{ type: Schema.Types.ObjectId, ref: "login_tb", required: true },
      service_station_id:{ type: Schema.Types.ObjectId, ref: "service_station_tb", required: true },
-     vehicle_number:{ type: String, required: true },
      complaint_title:{ type: String, required: true },
      description:{ type: String, required: true },
      type_of_service:{ type: String, required: true },
