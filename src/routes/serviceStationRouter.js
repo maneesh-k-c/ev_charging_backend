@@ -118,10 +118,10 @@ serviceRouter.post('/service-booking', async(req, res) => {
 
 
     try{
-        const oldData = await booking.findOne({ time: req.body.time,status:0 });
+        const oldData = await booking.findOne({ service_name: req.body.service_name,date: req.body.date,status:0 });
         console.log(oldData);
         if (oldData) {
-            return res.status(400).json({ success: false, error: true, message: "Time not available" });
+            return res.status(400).json({ success: false, error: true, message: "Service not available today" });
         }
         const result = await booking(bookingData).save()
         if (result) {
