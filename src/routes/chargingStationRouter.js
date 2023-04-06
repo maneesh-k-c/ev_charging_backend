@@ -19,7 +19,7 @@ ChargeRouter.post('/slot-booking', async(req, res) => {
 
 
     try{
-        const oldData = await booking.findOne({ time: req.body.time,status:0 });
+        const oldData = await booking.findOne({ time: req.body.time, date: req.body.date,status:0 });
         console.log(oldData);
         if (oldData) {
             return res.status(400).json({ success: false, error: true, message: "Time not available" });
