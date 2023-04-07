@@ -6,12 +6,12 @@ const slot = require('../models/slotsData')
 var objectId = require('mongodb').ObjectID;
 
 ChargeRouter.get('/charging-station-accept-booking/:id', async(req, res) => {
-const id = req.params.is
+const id = req.params.id
     try{
         const oldData = await booking.updateOne({ _id:id},{$set:{status:"1"}});
         
         if (oldData) {
-            return res.status(400).json({ success: false, error: true, message: "Booking acceped" });
+            return res.status(400).json({ success: false, error: true, message: "Booking accepted" });
         }
       
     }catch(err) {
@@ -26,7 +26,7 @@ const id = req.params.is
 })
 
 ChargeRouter.get('/charging-station-reject-booking/:id', async(req, res) => {
-    const id = req.params.is
+    const id = req.params.id
         try{
             const oldData = await booking.updateOne({ _id:id},{$set:{status:"2"}});
             
@@ -44,6 +44,26 @@ ChargeRouter.get('/charging-station-reject-booking/:id', async(req, res) => {
             }
         
     })
+
+ChargeRouter.get('/charging-station-complete-booking/:id', async(req, res) => {
+        const id = req.params.id
+            try{
+                const oldData = await booking.updateOne({ _id:id},{$set:{status:"3"}});
+                
+                if (oldData) {
+                    return res.status(400).json({ success: false, error: true, message: "Booking completed" });
+                }
+              
+            }catch(err) {
+                    res.status(401).json({
+                        success: false,
+                        error: true,
+                        data: err,
+                        message: 'something went wrong'
+                    })
+                }
+            
+})    
 
 ChargeRouter.post('/slot-booking', async(req, res) => {
 
@@ -83,6 +103,37 @@ ChargeRouter.get('/view-booked-slots-charging-station/:id', async (req, res) => 
     try {
         const id = req.params.id;
         booking.find({ charging_station_id: id, status:"0" })
+            .then(function (data) {
+                if (data == 0) {
+                    return res.status(401).json({
+                        success: false,
+                        error: true,
+                        message: "No Data Found!"
+                    })
+                }
+                else {
+                    return res.status(200).json({
+                        success: true,
+                        error: false,
+                        data: data
+                    })
+                }
+            })
+    } catch (error) {
+        return res.status(200).json({
+            success: true,
+            error: false,
+            message: "Something went wrong"
+        })
+    }
+
+
+})
+
+ChargeRouter.get('/view-accepted-slots-charging-station/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        booking.find({ charging_station_id: id, status:"1" })
             .then(function (data) {
                 if (data == 0) {
                     return res.status(401).json({

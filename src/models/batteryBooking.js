@@ -11,6 +11,7 @@ const BatteryboookSchema = new Schema({
      model_name:{ type: String, required: true },    
      capacity:{ type: String, required: true },    
      date:{ type: String, required: true },    
+     status:{ type: String, required: true },    
 })
 
 var Batterybooking = mongoose.model('battery_booking_tb',BatteryboookSchema) 

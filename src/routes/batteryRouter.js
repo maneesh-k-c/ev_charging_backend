@@ -221,7 +221,7 @@ batteryRouter.post('/add-battery', async(req, res) => {
         if (oldData) {
             return res.status(400).json({ success: false, error: true, message: "Name already exists" });
         }
-        const result = await batteryDetails.create({vehicle_name,model_name,capacity,amount,battery_shop_id})
+        const result = await batteryDetails.create({vehicle_name,model_name,capacity,amount,battery_shop_id,status:"0"})
         if (result) {
             res.status(201).json({ success: true, error: false, message: "Battery Added", details: result });
         }
