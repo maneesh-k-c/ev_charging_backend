@@ -68,7 +68,7 @@ batteryRouter.get('/battery-booked-single-view/:id', async (req, res) => {
 batteryRouter.get('/view-booked-batteries-battery-shop/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        booking.find({ battery_shop_id: id })
+        booking.find({ battery_shop_id: id, status:"0" })
             .then(function (data) {
                 if (data == 0) {
                     return res.status(401).json({
@@ -95,6 +95,58 @@ batteryRouter.get('/view-booked-batteries-battery-shop/:id', async (req, res) =>
 
 
 })
+
+ChargeRouter.get('/battery-shop-complete-booking/:id', async(req, res) => {
+    const id = req.params.id
+        try{
+            const oldData = await booking.updateOne({ _id:id},{$set:{status:"1"}});
+            
+            if (oldData) {
+                return res.status(400).json({ success: false, error: true, message: "Booking completed" });
+            }
+          
+        }catch(err) {
+                res.status(401).json({
+                    success: false,
+                    error: true,
+                    data: err,
+                    message: 'something went wrong'
+                })
+            }
+        
+}) 
+
+batteryRouter.get('/view-completed-battery-shop/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        booking.find({ battery_shop_id: id, status:"1" })
+            .then(function (data) {
+                if (data == 0) {
+                    return res.status(401).json({
+                        success: false,
+                        error: true,
+                        message: "No Data Found!"
+                    })
+                }
+                else {
+                    return res.status(200).json({
+                        success: true,
+                        error: false,
+                        data: data
+                    })
+                }
+            })
+    } catch (error) {
+        return res.status(200).json({
+            success: true,
+            error: false,
+            message: "Something went wrong"
+        })
+    }
+
+
+})
+
 batteryRouter.get('/user-view-battery-booking/:id', async (req, res) => {
     try {
         const id = req.params.id;
