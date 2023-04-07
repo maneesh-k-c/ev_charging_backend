@@ -96,7 +96,7 @@ batteryRouter.get('/view-booked-batteries-battery-shop/:id', async (req, res) =>
 
 })
 
-ChargeRouter.get('/battery-shop-complete-booking/:id', async(req, res) => {
+batteryRouter.get('/battery-shop-complete-booking/:id', async(req, res) => {
     const id = req.params.id
         try{
             const oldData = await booking.updateOne({ _id:id},{$set:{status:"1"}});

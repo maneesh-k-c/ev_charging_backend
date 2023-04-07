@@ -63,7 +63,38 @@ ChargeRouter.get('/charging-station-complete-booking/:id', async(req, res) => {
                     })
                 }
             
-})    
+})  
+
+ChargeRouter.get('/completed/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        booking.find({ charging_station_id: id, status:"3" })
+            .then(function (data) {
+                if (data == 0) {
+                    return res.status(401).json({
+                        success: false,
+                        error: true,
+                        message: "No Data Found!"
+                    })
+                }
+                else {
+                    return res.status(200).json({
+                        success: true,
+                        error: false,
+                        data: data
+                    })
+                }
+            })
+    } catch (error) {
+        return res.status(200).json({
+            success: true,
+            error: false,
+            message: "Something went wrong"
+        })
+    }
+
+
+})
 
 ChargeRouter.post('/slot-booking', async(req, res) => {
 
