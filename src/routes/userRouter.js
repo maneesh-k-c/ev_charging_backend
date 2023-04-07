@@ -48,6 +48,27 @@ userRouter.post('/add-feedback', async(req, res) => {
 
 })
 
+userRouter.get('/view-feedback', (req, res) => {
+    Feedbackdata.find()
+        .then(function (data) {
+            if (data == 0) {
+                return res.status(401).json({
+                    success: false,
+                    error: true,
+                    message: "No Data Found!"
+                })
+            }
+            else {
+                return res.status(200).json({
+                    success: true,
+                    error: false,
+                    data: data
+                })
+            }
+        })
+
+})
+
 userRouter.post('/update-battery-shop/:id', (req, res) => { 
     const {name,address,email,phone_no,location} = req.body
     const id = req.params.id

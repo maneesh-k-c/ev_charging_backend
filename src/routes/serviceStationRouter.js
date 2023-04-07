@@ -40,6 +40,56 @@ serviceRouter.get('/view-all-booking/:id', async (req, res) => {
 
 
 })
+serviceRouter.get('/service-accept-view/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        booking.find({ service_station_id: id, status:"1" })
+            .then(function (data) {
+                if (data == 0) {
+                    return res.status(401).json({
+                        success: false,
+                        error: true,
+                        message: "No Data Found!"
+                    })
+                }
+                else {
+                    return res.status(200).json({
+                        success: true,
+                        error: false,
+                        data: data
+                    })
+                }
+            })
+    } catch (error) {
+        return res.status(200).json({
+            success: true,
+            error: false,
+            message: "Something went wrong"
+        })
+    }
+
+
+})
+
+serviceRouter.get('/service-accept/:id', async(req, res) => {
+    const id = req.params.id
+        try{
+            const oldData = await booking.updateOne({ _id:id},{$set:{status:"1"}});
+            
+            if (oldData) {
+                return res.status(400).json({ success: false, error: true, message: "Booking accepted" });
+            }
+          
+        }catch(err) {
+                res.status(401).json({
+                    success: false,
+                    error: true,
+                    data: err,
+                    message: 'something went wrong'
+                })
+            }
+        
+    })
 
 serviceRouter.get('/booked-single-service-user/:id', async (req, res) => {
     try {
@@ -75,7 +125,7 @@ serviceRouter.get('/booked-single-service-user/:id', async (req, res) => {
 serviceRouter.get('/view-booked-service-station/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        booking.find({ service_station_id: id })
+        booking.find({ service_station_id: id, status:"0" })
             .then(function (data) {
                 if (data == 0) {
                     return res.status(401).json({
