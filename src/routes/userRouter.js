@@ -19,7 +19,7 @@ userRouter.post('/add-complaint', async(req, res) => {
     try {
         const {login_id,date,complaint,charging_station_id,service_station_id} = req.body
      
-        const result = await Complaintdata.create({login_id,date,complaint})
+        const result = await Complaintdata.create({login_id,date,complaint,charging_station_id,service_station_id})
         if (result) {
             res.status(201).json({ success: true, error: false, message: "Complaint Added", details: result });
         }
