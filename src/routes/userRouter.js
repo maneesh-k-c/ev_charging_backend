@@ -17,12 +17,14 @@ var ObjectId = require('mongodb').ObjectID;
 userRouter.post('/add-complaint', async(req, res) => {
  
     try {
-        const {login_id,date,complaint} = req.body
-       
+        const {login_id,date,complaint,charging_station_id,service_station_id} = req.body
+     
         const result = await Complaintdata.create({login_id,date,complaint})
         if (result) {
             res.status(201).json({ success: true, error: false, message: "Complaint Added", details: result });
         }
+       
+       
     } catch (error) {
         res.status(500).json({ success: false, error: true, message: "Something went wrong" });
         console.log(error);
