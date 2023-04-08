@@ -140,7 +140,7 @@
 			<main class="content">
 				<div class="container-fluid p-0">
 
-					<h1 class="h3 mb-3"><strong>View All</strong> user details</h1>
+					<h1 class="h3 mb-3"><strong>View All</strong> feedback details</h1>
 
 				
 
@@ -157,28 +157,17 @@
 									<thead>
 										<tr>
 											<th>Name</th>
-											<th class="d-none d-xl-table-cell">Email</th>
-											<th class="d-none d-xl-table-cell">Phone</th>
-											<th class="d-none d-md-table-cell">Action</th>
+											<th class="d-none d-xl-table-cell">Date</th>
+											<th class="d-none d-xl-table-cell">Feedback</th>
 										</tr>
 									</thead>
 									<tbody>
                                         <%for(i=0;i<data.length;i++){%>
 										<tr>
 											<td><%= data[i].name%></td>
-											<td class="d-none d-xl-table-cell"><%= data[i].email%></td>
-											<td class="d-none d-xl-table-cell"><%= data[i].phone_no%></td>
-											<td class="d-none d-md-table-cell">
-												<% if(data[i].status === "1"){%>
-													<a class="btn btn-danger" href="/admin/delete/<%=data[i].login_id%>">Delete</a>
-												<%}else{%>
-													<a class="btn btn-success" href="/admin/approve/<%=data[i].login_id%>">Approve</a>
-													<a class="btn btn-danger" href="/admin/delete/<%=data[i].login_id%>">Delete</a>
-												
-												  <%}%>
-												
-												
-											</td>
+											<td class="d-none d-xl-table-cell"><%= data[i].date%></td>
+											<td class="d-none d-xl-table-cell"><%= data[i].feedback%></td>
+										
 										</tr>
 									<%}%>
 									

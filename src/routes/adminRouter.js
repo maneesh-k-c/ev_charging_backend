@@ -6,12 +6,21 @@ const login = require('../models/loginData')
 const serviceStation = require('../models/serviceStationData')
 const ChargingStationdata = require('../models/chargingStationData')
 const Batterydata = require('../models/batteryData')
+const complaints = require('../models/complaintData')
+const feedback = require('../models/feebackData')
 
 
 
 
 
 adminRouter.get('/',(req,res)=>{
+    res.render('login')
+})
+
+adminRouter.get('/logout',(req,res)=>{
+    res.render('login')
+})
+adminRouter.get('/index',(req,res)=>{
     res.render('index')
 })
 adminRouter.get('/view-user',(req,res)=>{
@@ -277,52 +286,63 @@ adminRouter.get("/delete-battery-shop/:id", async (req, res) => {
 
 
 
-adminRouter.get('/complaints',(req,res)=>{
-    serviceStation.aggregate([{
-        '$lookup': {
-            'from': 'login_tbs',
-            'localField': 'login_id',
-            'foreignField': '_id',
-            'as': 'login'
-        }
-    },
-    {
-        "$unwind": "$login"
-    },
-    {
-        "$group": {
-            "_id": "$_id",
-            "name": { "$first": "$name" },
-            "email": { "$first": "$email" },
-            "phone_no": { "$first": "$phone_no" },
-            "status": { "$first": "$login.status" },
-            "login_id": { "$first": "$login._id" },
+// adminRouter.get('/complaints',(req,res)=>{
+//     complaints.aggregate([{
+//         '$lookup': {
+//             'from': 'charging_station_tbs',
+//             'localField': 'charging_station_id',
+//             'foreignField': '_id',
+//             'as': 'charging_station'
+//         }
+//     },
+//     {
+//         '$lookup': {
+//             'from': 'service_station_tbs',
+//             'localField': 'service_station_id',
+//             'foreignField': '_id',
+//             'as': 'service_station'
+//         }
+//     },
+//     {
+//         "$unwind": "$charging_station"
+//     },
+//     {
+//         "$unwind": "$service_station"
+//     },
+//     {
+//         "$group": {
+//             "_id": "$_id",
+//             "name": { "$first": "$name" },
+//             "email": { "$first": "$email" },
+//             "phone_no": { "$first": "$phone_no" },
+//             "status": { "$first": "$login.status" },
+//             "login_id": { "$first": "$login._id" },
 
-        }
-    }
-])
-    .then(function (data) {
-        if (data == 0) {
-            return res.status(401).json({
-                success: false,
-                error: true,
-                message: "No Data Found!"
-            })
-        }
-        else {
-            console.log(data);
-            res.render('view-user',{data})
-        }
-    })
+//         }
+//     }
+// ])
+//     .then(function (data) {
+//         if (data == 0) {
+//             return res.status(401).json({
+//                 success: false,
+//                 error: true,
+//                 message: "No Data Found!"
+//             })
+//         }
+//         else {
+//             console.log(data);
+//             res.render('view-complaints',{data})
+//         }
+//     })
    
-})
+// })
 
 adminRouter.get('/feedback',(req,res)=>{
-    serviceStation.aggregate([{
+    feedback.aggregate([{
         '$lookup': {
-            'from': 'login_tbs',
+            'from': 'user_tbs',
             'localField': 'login_id',
-            'foreignField': '_id',
+            'foreignField': 'login_id',
             'as': 'login'
         }
     },
@@ -332,11 +352,9 @@ adminRouter.get('/feedback',(req,res)=>{
     {
         "$group": {
             "_id": "$_id",
-            "name": { "$first": "$name" },
-            "email": { "$first": "$email" },
-            "phone_no": { "$first": "$phone_no" },
-            "status": { "$first": "$login.status" },
-            "login_id": { "$first": "$login._id" },
+            "date": { "$first": "$date" },
+            "feedback": { "$first": "$feedback" },
+            "name": { "$first": "$login.name" },
 
         }
     }
@@ -351,7 +369,7 @@ adminRouter.get('/feedback',(req,res)=>{
         }
         else {
             console.log(data);
-            res.render('view-user',{data})
+            res.render('view-feedback',{data})
         }
     })
    

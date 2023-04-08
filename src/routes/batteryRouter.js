@@ -4,6 +4,57 @@ const bcrypt = require('bcryptjs')
 const batteryDetails = require('../models/batteryDetailsData')
 const booking = require('../models/batteryBooking')
 
+batteryRouter.get('/accept-completed/:id', async(req, res) => {
+    const id = req.params.id
+        try{
+            const oldData = await booking.updateOne({ _id:id},{$set:{status:"1"}});
+            
+            if (oldData) {
+                return res.status(400).json({ success: false, error: true, message: "Booking completed" });
+            }
+          
+        }catch(err) {
+                res.status(401).json({
+                    success: false,
+                    error: true,
+                    data: err,
+                    message: 'something went wrong'
+                })
+            }
+        
+    })
+
+batteryRouter.get('/completed-view/:id', async (req, res) => {
+        try {
+            const id = req.params.id;
+            booking.find({ battery_shop_id: id, status:"1" })
+                .then(function (data) {
+                    if (data == 0) {
+                        return res.status(401).json({
+                            success: false,
+                            error: true,
+                            message: "No Data Found!"
+                        })
+                    }
+                    else {
+                        return res.status(200).json({
+                            success: true,
+                            error: false,
+                            data: data
+                        })
+                    }
+                })
+        } catch (error) {
+            return res.status(200).json({
+                success: true,
+                error: false,
+                message: "Something went wrong"
+            })
+        }
+    
+    
+    })    
+
 batteryRouter.post('/battery-booking', async(req, res) => {
 
     let bookingData = {
@@ -14,7 +65,8 @@ batteryRouter.post('/battery-booking', async(req, res) => {
         model_name: req.body.model_name,
         capacity: req.body.capacity,
         amount: req.body.amount,
-        date: req.body.date
+        date: req.body.date,
+        status: '0'
     }
 
 
