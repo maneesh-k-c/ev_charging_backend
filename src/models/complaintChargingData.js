@@ -5,7 +5,6 @@ const Schema = mongoose.Schema
 const ComplaintSchema = new Schema({
      login_id:{ type: Schema.Types.ObjectId, ref: "login_tb", required: true },
      charging_station_id:{ type: Schema.Types.ObjectId, ref: "charging_station_tb"},
-     charging_station_name:{ type: String },
      date:{ type: String, required: true },
      complaint:{ type: String, required: true }
 })
