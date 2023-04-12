@@ -6,7 +6,7 @@ const login = require('../models/loginData')
 const serviceStation = require('../models/serviceStationData')
 const ChargingStationdata = require('../models/chargingStationData')
 const Batterydata = require('../models/batteryData')
-const complaints = require('../models/complaintData')
+const complaints = require('../models/complaintChargingData')
 const feedback = require('../models/feebackData')
 
 

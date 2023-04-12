@@ -9,17 +9,17 @@ const service = require('../models/serviceStationData')
 const battery = require('../models/batteryData')
 
 const checkAuth = require("../middleware/check-auth");
-const Complaintdata = require('../models/complaintData')
+const Complaintdata = require('../models/complaintChargingData')
 const Feedbackdata = require('../models/feebackData')
 var ObjectId = require('mongodb').ObjectID;
 
 
-userRouter.post('/add-complaint', async(req, res) => {
+userRouter.post('/add-complaint-charging-station', async(req, res) => {
  
     try {
-        const {login_id,date,complaint,charging_station_id,service_station_id} = req.body
+        const {login_id,date,complaint,charging_station_id,name} = req.body
      
-        const result = await Complaintdata.create({login_id,date,complaint,charging_station_id,service_station_id})
+        const result = await Complaintdata.create({login_id,date,complaint,charging_station_id,charging_station_name:name})
         if (result) {
             res.status(201).json({ success: true, error: false, message: "Complaint Added", details: result });
         }
