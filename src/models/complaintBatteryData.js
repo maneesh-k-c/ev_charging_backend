@@ -9,5 +9,5 @@ const batterySchema = new Schema({
      complaint:{ type: String, required: true }
 })
 
-var batterytdata = mongoose.model('complaint_service_tb',batterySchema) 
+var batterytdata = mongoose.model('complaint_battery_tb',batterySchema) 
 module.exports=batterytdata;
