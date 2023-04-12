@@ -10,6 +10,7 @@ const battery = require('../models/batteryData')
 
 const checkAuth = require("../middleware/check-auth");
 const Complaintdata = require('../models/complaintChargingData')
+const Complaintservice = require('../models/complaintServiceData')
 const Feedbackdata = require('../models/feebackData')
 var ObjectId = require('mongodb').ObjectID;
 
@@ -20,6 +21,24 @@ userRouter.post('/add-complaint-charging-station', async(req, res) => {
         const {login_id,date,complaint,charging_station_id,name} = req.body
      
         const result = await Complaintdata.create({login_id,date,complaint,charging_station_id,charging_station_name:name})
+        if (result) {
+            res.status(201).json({ success: true, error: false, message: "Complaint Added", details: result });
+        }
+       
+       
+    } catch (error) {
+        res.status(500).json({ success: false, error: true, message: "Something went wrong" });
+        console.log(error);
+    }
+
+})
+
+userRouter.post('/add-complaint-charging-station', async(req, res) => {
+ 
+    try {
+        const {login_id,date,complaint,service_station_id,name} = req.body
+     
+        const result = await Complaintservice.create({login_id,date,complaint,service_station_id,service_station_name:name})
         if (result) {
             res.status(201).json({ success: true, error: false, message: "Complaint Added", details: result });
         }
