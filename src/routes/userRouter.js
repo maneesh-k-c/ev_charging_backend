@@ -33,7 +33,7 @@ userRouter.post('/add-complaint-charging-station', async(req, res) => {
 
 })
 
-userRouter.post('/add-complaint-charging-station', async(req, res) => {
+userRouter.post('/add-complaint-service-station', async(req, res) => {
  
     try {
         const {login_id,date,complaint,service_station_id,name} = req.body
