@@ -7,25 +7,23 @@ const register = require('../models/userData')
 const charging = require('../models/chargingStationData')
 const service = require('../models/serviceStationData')
 const battery = require('../models/batteryData')
-
-const checkAuth = require("../middleware/check-auth");
 const Complaintdata = require('../models/complaintChargingData')
 const Complaintservice = require('../models/complaintServiceData')
 const Complaintbattery = require('../models/complaintBatteryData')
 const Feedbackdata = require('../models/feebackData')
 var ObjectId = require('mongodb').ObjectID;
 
-userRouter.post('/add-complaint-battery-shop', async(req, res) => {
- 
+userRouter.post('/add-complaint-battery-shop', async (req, res) => {
+
     try {
-        const {login_id,date,complaint,vattery_shop_id} = req.body
-     
-        const result = await Complaintbattery.create({login_id,date,complaint,vattery_shop_id})
+        const { login_id, date, complaint, vattery_shop_id } = req.body
+
+        const result = await Complaintbattery.create({ login_id, date, complaint, vattery_shop_id })
         if (result) {
             res.status(201).json({ success: true, error: false, message: "Complaint Added", details: result });
         }
-       
-       
+
+
     } catch (error) {
         res.status(500).json({ success: false, error: true, message: "Something went wrong" });
         console.log(error);
@@ -33,17 +31,172 @@ userRouter.post('/add-complaint-battery-shop', async(req, res) => {
 
 })
 
-userRouter.post('/add-complaint-charging-station', async(req, res) => {
- 
+userRouter.get('/view-complaint-battery-shop/:id', (req, res) => {
+    const id = req.params.id
+    Complaintbattery.aggregate([{
+        '$lookup': {
+            'from': 'user_tbs',
+            'localField': 'login_id',
+            'foreignField': 'login_id',
+            'as': 'user'
+        }
+    },
+    {
+        '$lookup': {
+            'from': 'battery_station_tbs',
+            'localField': 'battery_shop_id',
+            'foreignField': '_id',
+            'as': 'battery'
+        }
+    },
+    {
+        "$unwind": "$user"
+    },
+    {
+        "$unwind": "$battery"
+    },
+    {
+        "$match":{
+            "battery_shop_id":ObjectId(id)
+        }
+    },
+    {
+        "$group": {
+            "_id": "$_id",
+            "name": { "$first": "$user.name" },
+            "phone_no": { "$first": "$phone_no" },
+            "complaint": { "$first": "$complaint" },
+            "date": { "$first": "$date" },
+
+        }
+    }
+    ])
+        .then(function (data) {
+            if (data == 0) {
+                return res.status(401).json({
+                    success: false,
+                    error: true,
+                    message: "No Data Found!"
+                })
+            }
+            else {
+                return res.status(200).json({
+                    success: true,
+                    error: false,
+                    data: data
+                })
+            }
+        })
+
+})
+
+userRouter.get('/view-complaint-charging-station/:id', (req, res) => {
+    const id = req.params.id
+    Complaintdata.aggregate([{
+        '$lookup': {
+            'from': 'user_tbs',
+            'localField': 'login_id',
+            'foreignField': 'login_id',
+            'as': 'user'
+        }
+    },
+    {
+        "$unwind": "$user"
+    },  
+    {
+        "$match":{
+            "charging_station_id":ObjectId(id)
+        }
+    },
+    {
+        "$group": {
+            "_id": "$_id",
+            "name": { "$first": "$user.name" },
+            "phone_no": { "$first": "$user.phone_no" },
+            "complaint": { "$first": "$complaint" },
+            "date": { "$first": "$date" },
+
+        }
+    }
+    ])
+        .then(function (data) {
+            if (data == 0) {
+                return res.status(401).json({
+                    success: false,
+                    error: true,
+                    message: "No Data Found!"
+                })
+            }
+            else {
+                return res.status(200).json({
+                    success: true,
+                    error: false,
+                    data: data
+                })
+            }
+        })
+
+})
+
+userRouter.get('/view-complaint-service-station/:id', (req, res) => {
+    const id = req.params.id
+    Complaintservice.aggregate([{
+        '$lookup': {
+            'from': 'user_tbs',
+            'localField': 'login_id',
+            'foreignField': 'login_id',
+            'as': 'user'
+        }
+    },
+    {
+        "$unwind": "$user"
+    },  
+    {
+        "$match":{
+            "service_station_id":ObjectId(id)
+        }
+    },
+    {
+        "$group": {
+            "_id": "$_id",
+            "name": { "$first": "$user.name" },
+            "phone_no": { "$first": "$user.phone_no" },
+            "complaint": { "$first": "$complaint" },
+            "date": { "$first": "$date" },
+
+        }
+    }
+    ])
+        .then(function (data) {
+            if (data == 0) {
+                return res.status(401).json({
+                    success: false,
+                    error: true,
+                    message: "No Data Found!"
+                })
+            }
+            else {
+                return res.status(200).json({
+                    success: true,
+                    error: false,
+                    data: data
+                })
+            }
+        })
+
+})
+
+userRouter.post('/add-complaint-charging-station', async (req, res) => {
+
     try {
-        const {login_id,date,complaint,charging_station_id} = req.body
-     
-        const result = await Complaintdata.create({login_id,date,complaint,charging_station_id})
+        const { login_id, date, complaint, charging_station_id } = req.body
+
+        const result = await Complaintdata.create({ login_id, date, complaint, charging_station_id })
         if (result) {
             res.status(201).json({ success: true, error: false, message: "Complaint Added", details: result });
         }
-       
-       
+
+
     } catch (error) {
         res.status(500).json({ success: false, error: true, message: "Something went wrong" });
         console.log(error);
@@ -51,17 +204,17 @@ userRouter.post('/add-complaint-charging-station', async(req, res) => {
 
 })
 
-userRouter.post('/add-complaint-service-station', async(req, res) => {
- 
+userRouter.post('/add-complaint-service-station', async (req, res) => {
+
     try {
-        const {login_id,date,complaint,service_station_id} = req.body
-     
-        const result = await Complaintservice.create({login_id,date,complaint,service_station_id})
+        const { login_id, date, complaint, service_station_id } = req.body
+
+        const result = await Complaintservice.create({ login_id, date, complaint, service_station_id })
         if (result) {
             res.status(201).json({ success: true, error: false, message: "Complaint Added", details: result });
         }
-       
-       
+
+
     } catch (error) {
         res.status(500).json({ success: false, error: true, message: "Something went wrong" });
         console.log(error);
@@ -69,12 +222,12 @@ userRouter.post('/add-complaint-service-station', async(req, res) => {
 
 })
 
-userRouter.post('/add-feedback', async(req, res) => {
- 
+userRouter.post('/add-feedback', async (req, res) => {
+
     try {
-        const {login_id,date,feedback} = req.body
-       
-        const result = await Feedbackdata.create({login_id,date,feedback})
+        const { login_id, date, feedback } = req.body
+
+        const result = await Feedbackdata.create({ login_id, date, feedback })
         if (result) {
             res.status(201).json({ success: true, error: false, message: "Feedback Added", details: result });
         }
@@ -106,11 +259,11 @@ userRouter.get('/view-feedback', (req, res) => {
 
 })
 
-userRouter.post('/update-battery-shop/:id', (req, res) => { 
-    const {name,address,email,phone_no,location} = req.body
+userRouter.post('/update-battery-shop/:id', (req, res) => {
+    const { name, address, email, phone_no, location } = req.body
     const id = req.params.id
     console.log(id);
-    battery.updateOne({ _id: id }, { $set: {name,address,email,phone_no,location} }).then((data) => {
+    battery.updateOne({ _id: id }, { $set: { name, address, email, phone_no, location } }).then((data) => {
         console.log(data);
         res.status(200).json({
             success: true,
@@ -126,11 +279,11 @@ userRouter.post('/update-battery-shop/:id', (req, res) => {
 
 })
 
-userRouter.post('/update-charging-station/:id', (req, res) => { 
-    const {name,address,email,phone_no,location} = req.body
+userRouter.post('/update-charging-station/:id', (req, res) => {
+    const { name, address, email, phone_no, location } = req.body
     const id = req.params.id
     console.log(id);
-    charging.updateOne({ _id: id }, { $set: {name,address,email,phone_no,location} }).then((data) => {
+    charging.updateOne({ _id: id }, { $set: { name, address, email, phone_no, location } }).then((data) => {
         console.log(data);
         res.status(200).json({
             success: true,
@@ -146,11 +299,11 @@ userRouter.post('/update-charging-station/:id', (req, res) => {
 
 })
 
-userRouter.post('/update-service-station/:id', (req, res) => { 
-    const {name,address,email,phone_no,location} = req.body
+userRouter.post('/update-service-station/:id', (req, res) => {
+    const { name, address, email, phone_no, location } = req.body
     const id = req.params.id
     console.log(id);
-    service.updateOne({ _id: id }, { $set: {name,address,email,phone_no,location} }).then((data) => {
+    service.updateOne({ _id: id }, { $set: { name, address, email, phone_no, location } }).then((data) => {
         console.log(data);
         res.status(200).json({
             success: true,
@@ -166,11 +319,11 @@ userRouter.post('/update-service-station/:id', (req, res) => {
 
 })
 
-userRouter.post('/update-user-profile/:id', (req, res) => { 
-    const {name,address,email,phone_no,location} = req.body
+userRouter.post('/update-user-profile/:id', (req, res) => {
+    const { name, address, email, phone_no, location } = req.body
     const id = req.params.id
     console.log(id);
-    register.updateOne({ _id: id }, { $set: {name,address,email,phone_no,location} }).then((data) => {
+    register.updateOne({ _id: id }, { $set: { name, address, email, phone_no, location } }).then((data) => {
         console.log(data);
         res.status(200).json({
             success: true,
@@ -330,7 +483,7 @@ userRouter.get('/admin-view-user', (req, res) => {
 
 })
 
-userRouter.post('/service-station-register', async(req, res) => {
+userRouter.post('/service-station-register', async (req, res) => {
     console.log("data " + JSON.stringify(req.body))
     try {
         const oldUser = await login.findOne({ username: req.body.username });
@@ -348,7 +501,7 @@ userRouter.post('/service-station-register', async(req, res) => {
         }
         var log = { username: req.body.username, password: hashedPassword, role: 3, status: 0 }
         const result = await login(log).save()
-        var reg ={login_id: result._id, name: req.body.name,email: req.body.email,phone_no: req.body.phone_no,location: req.body.location,address: req.body.address,} 
+        var reg = { login_id: result._id, name: req.body.name, email: req.body.email, phone_no: req.body.phone_no, location: req.body.location, address: req.body.address, }
         const result2 = await service(reg).save()
         if (result2) {
             res.status(201).json({ success: true, error: false, message: "Registration completed", details: result2 });
@@ -361,7 +514,7 @@ userRouter.post('/service-station-register', async(req, res) => {
 
 })
 
-userRouter.post('/charging-station-register', async(req, res) => {
+userRouter.post('/charging-station-register', async (req, res) => {
     console.log("data " + JSON.stringify(req.body))
     try {
         const oldUser = await login.findOne({ username: req.body.username });
@@ -379,7 +532,7 @@ userRouter.post('/charging-station-register', async(req, res) => {
         }
         var log = { username: req.body.username, password: hashedPassword, role: 1, status: 0 }
         const result = await login(log).save()
-        var reg ={login_id: result._id, name: req.body.name,email: req.body.email,phone_no: req.body.phone_no,address: req.body.address,location: req.body.location,slots: req.body.slots,} 
+        var reg = { login_id: result._id, name: req.body.name, email: req.body.email, phone_no: req.body.phone_no, address: req.body.address, location: req.body.location, slots: req.body.slots, }
         const result2 = await charging(reg).save()
         if (result2) {
             res.status(201).json({ success: true, error: false, message: "Registration completed", details: result2 });
@@ -392,7 +545,7 @@ userRouter.post('/charging-station-register', async(req, res) => {
 
 })
 
-userRouter.post('/battery-shop-register', async(req, res) => {
+userRouter.post('/battery-shop-register', async (req, res) => {
     console.log("data " + JSON.stringify(req.body))
     try {
         const oldUser = await login.findOne({ username: req.body.username });
@@ -411,7 +564,7 @@ userRouter.post('/battery-shop-register', async(req, res) => {
         }
         var log = { username: req.body.username, password: hashedPassword, role: 4, status: 0 }
         const result = await login(log).save()
-        var reg ={login_id: result._id, name: req.body.name,address:req.body.address,email: req.body.email,phone_no: req.body.phone_no,location: req.body.location,slots: req.body.slots,} 
+        var reg = { login_id: result._id, name: req.body.name, address: req.body.address, email: req.body.email, phone_no: req.body.phone_no, location: req.body.location, slots: req.body.slots, }
         const result2 = await battery(reg).save()
         if (result2) {
             res.status(201).json({ success: true, error: false, message: "Registration completed", details: result2 });
@@ -442,7 +595,7 @@ userRouter.post('/register', async (req, res) => {
         }
         var log = { username: req.body.username, password: hashedPassword, role: 2, status: 0 }
         const result = await login(log).save()
-        var reg ={login_id: result._id, name: req.body.name,email: req.body.email,phone_no: req.body.phone_no,location: req.body.location,address: req.body.address,} 
+        var reg = { login_id: result._id, name: req.body.name, email: req.body.email, phone_no: req.body.phone_no, location: req.body.location, address: req.body.address, }
         const result2 = await register(reg).save()
         if (result2) {
             res.status(201).json({ success: true, error: false, message: "Registration completed", details: result2 });
@@ -559,7 +712,7 @@ userRouter.post('/approve-service-station/:id', (req, res) => {
     const id = req.params.id
     console.log(id);
     login.find({ _id: id }).then((data) => {
-        console.log("data",data);
+        console.log("data", data);
         if (data[0].status === "0") {
             login.updateOne({ _id: id }, { $set: { status: 1 } }).then((user) => {
                 console.log(user);
