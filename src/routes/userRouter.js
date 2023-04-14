@@ -226,11 +226,23 @@ userRouter.post('/add-feedback', async (req, res) => {
 
     try {
         const { login_id, date, feedback } = req.body
-
-        const result = await Feedbackdata.create({ login_id, date, feedback })
-        if (result) {
-            res.status(201).json({ success: true, error: false, message: "Feedback Added", details: result });
+        if(req.body.service_station_id){
+            const result = await Feedbackdata.create({ login_id, date, feedback, service_station_id: req.body.service_station_id})
+            if (result) {
+               return res.status(201).json({ success: true, error: false, message: "Feedback Added", details: result });
+            }
+        }else if(req.body.charging_station_id){
+            const result = await Feedbackdata.create({ login_id, date, feedback, charging_station_id: req.body.charging_station_id})
+            if (result) {
+                return  res.status(201).json({ success: true, error: false, message: "Feedback Added", details: result });
+            }
+        }else if(req.body.battery_shop_id){
+            const result = await Feedbackdata.create({ login_id, date, feedback, battery_shop_id: req.body.battery_shop_id})
+            if (result) {
+                return  res.status(201).json({ success: true, error: false, message: "Feedback Added", details: result });
+            }
         }
+       
     } catch (error) {
         res.status(500).json({ success: false, error: true, message: "Something went wrong" });
         console.log(error);

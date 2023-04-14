@@ -4,6 +4,9 @@ const Schema = mongoose.Schema
 
 const FeedbackSchema = new Schema({
      login_id:{ type: Schema.Types.ObjectId, ref: "login_tb", required: true },
+     battery_shop_id:{ type: Schema.Types.ObjectId, ref: "battery_station_tb" },
+     charging_station_id:{ type: Schema.Types.ObjectId, ref: "charging_station_tb"},
+     service_station_id:{ type: Schema.Types.ObjectId, ref: "service_station_tb" },
      date:{ type: String, required: true },
      feedback:{ type: String, required: true }
 })
