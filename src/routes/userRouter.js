@@ -11,7 +11,36 @@ const Complaintdata = require('../models/complaintChargingData')
 const Complaintservice = require('../models/complaintServiceData')
 const Complaintbattery = require('../models/complaintBatteryData')
 const Feedbackdata = require('../models/feebackData')
+const Notificationdata = require('../models/notificationData')
 var ObjectId = require('mongodb').ObjectID;
+
+userRouter.post('/add-notification', async (req, res) => {
+
+    try {
+        const { user_id, date, notification } = req.body
+        if(req.body.service_station_id){
+            const result = await Notificationdata.create({ user_id, date, notification, service_station_id: req.body.service_station_id})
+            if (result) {
+               return res.status(201).json({ success: true, error: false, message: "Notification Added", details: result });
+            }
+        }else if(req.body.charging_station_id){
+            const result = await Notificationdata.create({ user_id, date, notification, charging_station_id: req.body.charging_station_id})
+            if (result) {
+                return  res.status(201).json({ success: true, error: false, message: "Notification Added", details: result });
+            }
+        }else if(req.body.battery_shop_id){
+            const result = await Notificationdata.create({ user_id, date, notification, battery_shop_id: req.body.battery_shop_id})
+            if (result) {
+                return  res.status(201).json({ success: true, error: false, message: "Notification Added", details: result });
+            }
+        }
+       
+    } catch (error) {
+        res.status(500).json({ success: false, error: true, message: "Something went wrong" });
+        console.log(error);
+    }
+
+})
 
 userRouter.post('/add-complaint-battery-shop', async (req, res) => {
 
