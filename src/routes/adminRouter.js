@@ -8,6 +8,7 @@ const ChargingStationdata = require('../models/chargingStationData')
 const Batterydata = require('../models/batteryData')
 const complaints = require('../models/complaintChargingData')
 const Bcomplaints = require('../models/complaintBatteryData')
+const Scomplaints = require('../models/complaintServiceData')
 const feedback = require('../models/feebackData')
 
 
@@ -113,8 +114,19 @@ adminRouter.get('/battery-shop-complaints',(req,res)=>{
           'as': 'login'
         }
       },
+      {
+        '$lookup': {
+          'from': 'battery_station_tbs', 
+          'localField': 'battery_shop_id', 
+          'foreignField': '_id', 
+          'as': 'battery'
+        }
+      },
     {
         "$unwind": "$login"
+    },
+    {
+        "$unwind": "$battery"
     },
     {
         "$group": {
@@ -122,7 +134,7 @@ adminRouter.get('/battery-shop-complaints',(req,res)=>{
             "name": { "$first": "$login.name" },
             "email": { "$first": "$login.email" },
             "phone_no": { "$first": "$login.phone_no" },
-            "charging_station_name": { "$first": "$charging_station_name" },
+            "battery_shop_name": { "$first": "$battery.name" },
             "complaint": { "$first": "$complaint" },
             "date": { "$first": "$date" },
 
@@ -138,11 +150,55 @@ adminRouter.get('/battery-shop-complaints',(req,res)=>{
             })
         }
         else {
+        
             res.render('view-complaint-battery',{data})
         }
     })
    
 })
+
+adminRouter.get('/service-station-complaints',(req,res)=>{
+    Scomplaints.aggregate([ {
+        '$lookup': {
+          'from': 'user_tbs', 
+          'localField': 'login_id', 
+          'foreignField': 'login_id', 
+          'as': 'login'
+        }
+      },
+    {
+        "$unwind": "$login"
+    },
+   
+    {
+        "$group": {
+            "_id": "$_id",
+            "name": { "$first": "$login.name" },
+            "email": { "$first": "$login.email" },
+            "phone_no": { "$first": "$login.phone_no" },
+            "service_station_name": { "$first": "$service_station_name" },
+            "complaint": { "$first": "$complaint" },
+            "date": { "$first": "$date" },
+
+        }
+    }
+])
+    .then(function (data) {
+        if (data == 0) {
+            return res.status(401).json({
+                success: false,
+                error: true,
+                message: "No Data Found!"
+            })
+        }
+        else {
+     
+            res.render('view-complaint-service',{data})
+        }
+    })
+   
+})
+
 
 adminRouter.get("/approve/:id", async (req, res) => {
     const id = req.params.id

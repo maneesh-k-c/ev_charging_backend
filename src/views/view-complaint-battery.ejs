@@ -28,9 +28,9 @@
 
 
 
-		<nav id="sidebar" class="sidebar js-sidebar">
+        <nav id="sidebar" class="sidebar js-sidebar">
 			<div class="sidebar-content js-simplebar">
-				<a class="sidebar-brand" href="index.html">
+				<a class="sidebar-brand" href="/admin/index">
 					<span class="align-middle">EV</span>
 				</a>
 
@@ -82,9 +82,17 @@
 					</li>
 
 					<li class="sidebar-item">
-						<a class="sidebar-link" href="/admin/complaints">
+						<a class="sidebar-link" href="/admin/charging-station-complaints">
 							<i class="align-middle" data-feather="sliders"></i>
-							<span class="align-middle">View complaints</span>
+							<span class="align-middle">charging station</span>
+						</a>
+						<a class="sidebar-link" href="/admin/service-station-complaints">
+							<i class="align-middle" data-feather="sliders"></i>
+							<span class="align-middle">service station</span>
+						</a>
+						<a class="sidebar-link" href="/admin/battery-shop-complaints">
+							<i class="align-middle" data-feather="sliders"></i>
+							<span class="align-middle">battery shop</span>
 						</a>
 					</li>
 					<li class="sidebar-header">
@@ -160,7 +168,7 @@
 											<th class="d-none d-xl-table-cell">Name</th>
 											<th class="d-none d-xl-table-cell">Email</th>
 											<th class="d-none d-xl-table-cell">Phone</th>
-											<th class="d-none d-xl-table-cell">Station Name</th>
+											<th class="d-none d-xl-table-cell">Shop Name</th>
 											<th class="d-none d-md-table-cell">Complaint</th>
 											<th class="d-none d-md-table-cell">Date</th>
 										</tr>
@@ -172,7 +180,7 @@
 											<td class="d-none d-xl-table-cell"><%= data[i].name%></td>
 											<td class="d-none d-xl-table-cell"><%= data[i].email%></td>
 											<td class="d-none d-xl-table-cell"><%= data[i].phone_no%></td>
-											<td class="d-none d-xl-table-cell"><%= data[i].charging_station_name%></td>
+											<td class="d-none d-xl-table-cell"><%= data[i].battery_shop_name%></td>
 											<td class="d-none d-xl-table-cell"><%= data[i].complaint%></td>
 											<td class="d-none d-xl-table-cell"><%= data[i].date%></td>
 											<!-- <td class="d-none d-md-table-cell">

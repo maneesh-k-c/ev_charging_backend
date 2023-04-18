@@ -28,7 +28,7 @@
 
 
 
-		<nav id="sidebar" class="sidebar js-sidebar">
+        <nav id="sidebar" class="sidebar js-sidebar">
 			<div class="sidebar-content js-simplebar">
 				<a class="sidebar-brand" href="/admin/index">
 					<span class="align-middle">EV</span>
@@ -148,7 +148,7 @@
 			<main class="content">
 				<div class="container-fluid p-0">
 
-					<h1 class="h3 mb-3"><strong>View All</strong> battery shop details</h1>
+					<h1 class="h3 mb-3"><strong>View All</strong>service station complaints details</h1>
 
 				
 
@@ -164,19 +164,26 @@
 								<table class="table table-hover my-0">
 									<thead>
 										<tr>
-											<th>Name</th>
+										
+											<th class="d-none d-xl-table-cell">Name</th>
 											<th class="d-none d-xl-table-cell">Email</th>
 											<th class="d-none d-xl-table-cell">Phone</th>
-											<th class="d-none d-md-table-cell">Action</th>
+											<th class="d-none d-xl-table-cell">Shop Name</th>
+											<th class="d-none d-md-table-cell">Complaint</th>
+											<th class="d-none d-md-table-cell">Date</th>
 										</tr>
 									</thead>
 									<tbody>
                                         <%for(i=0;i<data.length;i++){%>
 										<tr>
-											<td><%= data[i].name%></td>
+										
+											<td class="d-none d-xl-table-cell"><%= data[i].name%></td>
 											<td class="d-none d-xl-table-cell"><%= data[i].email%></td>
 											<td class="d-none d-xl-table-cell"><%= data[i].phone_no%></td>
-											<td class="d-none d-md-table-cell">
+											<td class="d-none d-xl-table-cell"><%= data[i].service_station_name%></td>
+											<td class="d-none d-xl-table-cell"><%= data[i].complaint%></td>
+											<td class="d-none d-xl-table-cell"><%= data[i].date%></td>
+											<!-- <td class="d-none d-md-table-cell">
 												<% if(data[i].status === "1"){%>
 													<a class="btn btn-danger" href="/admin/delete-battery-shop/<%=data[i].login_id%>">Delete</a>
 												<%}else{%>
@@ -186,7 +193,7 @@
 												  <%}%>
 												
 												
-											</td>
+											</td> -->
 										</tr>
 									<%}%>
 									
