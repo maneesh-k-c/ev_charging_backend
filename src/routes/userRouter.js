@@ -42,6 +42,96 @@ userRouter.post('/add-notification', async (req, res) => {
 
 })
 
+userRouter.get('/view-notification/:shop/:id', async(req, res) => {
+
+    try {
+      const shop = req.params.shop
+      console.log(shop);
+      const id = req.params.id
+  
+      if(shop==="battery_shop_id"){
+          console.log(id);
+          const data = await Notificationdata.aggregate([{
+              '$lookup': {
+                  'from': 'user_tbs',
+                  'localField': 'user_id',
+                  'foreignField': '_id',
+                  'as': 'user'
+              }
+          },
+          {"$unwind": "$user"},  
+          {"$match":{
+                 'battery_shop_id' : ObjectId(id)
+              }
+          },
+          {"$group": {
+                  "_id": "$_id",
+                  "name": { "$first": "$user.name" },
+                  "phone_no": { "$first": "$user.phone_no" },
+                  "notification": { "$first": "$notification" },
+                  "date": { "$first": "$date" },
+              }
+          }])
+          console.log(data);
+          if(data[0]){ return res.status(200).json({success: true,error: false,data: data})
+          }else{ return res.status(401).json({success: false,error: true,message: "No Data Found!"})}
+           
+          }else if(shop==="charging_station_id"){
+          const data = await Notificationdata.aggregate([{
+              '$lookup': {
+                  'from': 'user_tbs',
+                  'localField': 'user_id',
+                  'foreignField': '_id',
+                  'as': 'user'
+              }
+          },
+          {"$unwind": "$user"},  
+          {"$match":{
+                 'charging_station_id' : ObjectId(id)
+              }
+          },
+          {"$group": {
+                  "_id": "$_id",
+                  "name": { "$first": "$user.name" },
+                  "phone_no": { "$first": "$user.phone_no" },
+                  "notification": { "$first": "$notification" },
+                  "date": { "$first": "$date" },
+              }
+          }])
+          if(data[0]){ return res.status(200).json({success: true,error: false,data: data})
+          }else{ return res.status(401).json({success: false,error: true,message: "No Data Found!"})}
+      }else if(shop==="service_station_id"){
+          const data = await Notificationdata.aggregate([{
+              '$lookup': {
+                  'from': 'user_tbs',
+                  'localField': 'user_id',
+                  'foreignField': '_id',
+                  'as': 'user'
+              }
+          },
+          {"$unwind": "$user"},  
+          {"$match":{
+                 'service_station_id' : ObjectId(id)
+              }
+          },
+          {"$group": {
+                  "_id": "$_id",
+                  "name": { "$first": "$user.name" },
+                  "phone_no": { "$first": "$user.phone_no" },
+                  "notification": { "$first": "$notification" },
+                  "date": { "$first": "$date" },
+              }
+          }])
+          if(data[0]){ return res.status(200).json({success: true,error: false,data: data})
+          }else{ return res.status(401).json({success: false,error: true,message: "No Data Found!"})}
+      }
+      
+    } catch (error) {
+      return res.status(401).json({success: false,error: true,message: error})
+    }
+  
+  })
+
 userRouter.post('/add-complaint-battery-shop', async (req, res) => {
 
     try {
