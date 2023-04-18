@@ -7,6 +7,9 @@ const NotificationSchema = new Schema({
      battery_shop_id:{ type: Schema.Types.ObjectId, ref: "battery_station_tb" },
      charging_station_id:{ type: Schema.Types.ObjectId, ref: "charging_station_tb"},
      service_station_id:{ type: Schema.Types.ObjectId, ref: "service_station_tb" },
+     battery_shop_name:{ type: String},
+     charging_station_name:{ type: String},
+     service_station_name:{ type: String},
      date:{ type: String, required: true },
      notification:{ type: String, required: true }
 })

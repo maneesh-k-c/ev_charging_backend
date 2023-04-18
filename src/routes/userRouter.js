@@ -19,17 +19,17 @@ userRouter.post('/add-notification', async (req, res) => {
     try {
         const { user_id, date, notification } = req.body
         if(req.body.service_station_id){
-            const result = await Notificationdata.create({ user_id, date, notification, service_station_id: req.body.service_station_id})
+            const result = await Notificationdata.create({ user_id, date, notification, service_station_id: req.body.service_station_id, service_station_name:req.body.service_station_name})
             if (result) {
                return res.status(201).json({ success: true, error: false, message: "Notification Added", details: result });
             }
         }else if(req.body.charging_station_id){
-            const result = await Notificationdata.create({ user_id, date, notification, charging_station_id: req.body.charging_station_id})
+            const result = await Notificationdata.create({ user_id, date, notification, charging_station_id: req.body.charging_station_id, charging_station_name: req.body.charging_station_name})
             if (result) {
                 return  res.status(201).json({ success: true, error: false, message: "Notification Added", details: result });
             }
         }else if(req.body.battery_shop_id){
-            const result = await Notificationdata.create({ user_id, date, notification, battery_shop_id: req.body.battery_shop_id})
+            const result = await Notificationdata.create({ user_id, date, notification, battery_shop_id: req.body.battery_shop_id, battery_shop_name: req.body.battery_shop_name})
             if (result) {
                 return  res.status(201).json({ success: true, error: false, message: "Notification Added", details: result });
             }
@@ -81,9 +81,9 @@ userRouter.get('/view-notification/:id', async(req, res) => {
           },
           {"$group": {
                   "_id": "$_id",
-                  "charging_name": { "$first": `$charging[0]` },
-                  "service_name": { "$first": "$service[0].name" },
-                  "battery_name": { "$first": "$battery[0].name" },
+                  "charging_name": { "$first": "$charging_station_name" },
+                  "service_name": { "$first": "$service_station_name" },
+                  "battery_name": { "$first": "$battery_shop_name" },
                   "date": { "$first": "$date" },
                   "notification": { "$first": "$notification" },
               }
