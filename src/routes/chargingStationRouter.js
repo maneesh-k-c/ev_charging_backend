@@ -137,7 +137,7 @@ ChargeRouter.post('/update-slot/:id', async(req, res) => {
 
     try{
 
-        const oldData = await booking.updateOne({ _id:id},{$set:{status:'Available'}});
+        const oldData = await slot.updateOne({ _id:id},{$set:{status:'Available'}});
 
        
             return res.status(400).json({ success: true, error: false, message: "Status updated" });
