@@ -132,6 +132,27 @@ ChargeRouter.post('/slot-booking', async(req, res) => {
     
 })
 
+ChargeRouter.post('/update-slot/:id', async(req, res) => {
+    const id = req.params.id
+
+    try{
+
+        const oldData = await booking.updateOne({ _id:id},{$set:{status:'Available'}});
+
+       
+            return res.status(400).json({ success: true, error: false, message: "Status updated" });
+       
+    }catch(err) {
+            res.status(401).json({
+                success: false,
+                error: true,
+                data: err,
+                message: 'something went wrong'
+            })
+        }
+    
+})
+
 ChargeRouter.get('/view-booked-slots-charging-station/:id', async (req, res) => {
     try {
         const id = req.params.id;
