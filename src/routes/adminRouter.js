@@ -7,6 +7,7 @@ const serviceStation = require('../models/serviceStationData')
 const ChargingStationdata = require('../models/chargingStationData')
 const Batterydata = require('../models/batteryData')
 const complaints = require('../models/complaintChargingData')
+const Bcomplaints = require('../models/complaintBatteryData')
 const feedback = require('../models/feebackData')
 
 
@@ -58,6 +59,86 @@ adminRouter.get('/view-user',(req,res)=>{
         else {
             console.log(data);
             res.render('view-user',{data})
+        }
+    })
+   
+})
+
+adminRouter.get('/charging-station-complaints',(req,res)=>{
+    complaints.aggregate([ {
+        '$lookup': {
+          'from': 'user_tbs', 
+          'localField': 'login_id', 
+          'foreignField': 'login_id', 
+          'as': 'login'
+        }
+      },
+    {
+        "$unwind": "$login"
+    },
+    {
+        "$group": {
+            "_id": "$_id",
+            "name": { "$first": "$login.name" },
+            "email": { "$first": "$login.email" },
+            "phone_no": { "$first": "$login.phone_no" },
+            "charging_station_name": { "$first": "$charging_station_name" },
+            "complaint": { "$first": "$complaint" },
+            "date": { "$first": "$date" },
+
+        }
+    }
+])
+    .then(function (data) {
+        if (data == 0) {
+            return res.status(401).json({
+                success: false,
+                error: true,
+                message: "No Data Found!"
+            })
+        }
+        else {
+            res.render('view-complaints',{data})
+        }
+    })
+   
+})
+
+adminRouter.get('/battery-shop-complaints',(req,res)=>{
+    Bcomplaints.aggregate([ {
+        '$lookup': {
+          'from': 'user_tbs', 
+          'localField': 'login_id', 
+          'foreignField': 'login_id', 
+          'as': 'login'
+        }
+      },
+    {
+        "$unwind": "$login"
+    },
+    {
+        "$group": {
+            "_id": "$_id",
+            "name": { "$first": "$login.name" },
+            "email": { "$first": "$login.email" },
+            "phone_no": { "$first": "$login.phone_no" },
+            "charging_station_name": { "$first": "$charging_station_name" },
+            "complaint": { "$first": "$complaint" },
+            "date": { "$first": "$date" },
+
+        }
+    }
+])
+    .then(function (data) {
+        if (data == 0) {
+            return res.status(401).json({
+                success: false,
+                error: true,
+                message: "No Data Found!"
+            })
+        }
+        else {
+            res.render('view-complaint-battery',{data})
         }
     })
    

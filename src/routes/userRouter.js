@@ -42,91 +42,56 @@ userRouter.post('/add-notification', async (req, res) => {
 
 })
 
-userRouter.get('/view-notification/:shop/:id', async(req, res) => {
+userRouter.get('/view-notification/:id', async(req, res) => {
 
     try {
-      const shop = req.params.shop
-      console.log(shop);
-      const id = req.params.id
-  
-      if(shop==="battery_shop_id"){
-          console.log(id);
+     
+      const id = req.params.id  
+
           const data = await Notificationdata.aggregate([{
               '$lookup': {
-                  'from': 'user_tbs',
-                  'localField': 'user_id',
+                  'from': 'battery_station_tbs',
+                  'localField': 'battery_shop_id',
                   'foreignField': '_id',
-                  'as': 'user'
+                  'as': 'battery'
               }
           },
-          {"$unwind": "$user"},  
+          {
+            '$lookup': {
+                'from': 'charging_station_tbs',
+                'localField': 'charging_station_id',
+                'foreignField': '_id',
+                'as': 'charging'
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'service_station_tbs',
+                'localField': 'service_station_id',
+                'foreignField': '_id',
+                'as': 'service'
+            }
+        },
+        //   {"$unwind": "$battery"},  
+        //   {"$unwind": "$charging"},  
+        //   {"$unwind": "$service"},  
           {"$match":{
-                 'battery_shop_id' : ObjectId(id)
+                 'user_id' : ObjectId(id)
               }
           },
           {"$group": {
                   "_id": "$_id",
-                  "name": { "$first": "$user.name" },
-                  "phone_no": { "$first": "$user.phone_no" },
-                  "notification": { "$first": "$notification" },
+                  "charging_name": { "$first": `$charging[0]` },
+                  "service_name": { "$first": "$service[0].name" },
+                  "battery_name": { "$first": "$battery[0].name" },
                   "date": { "$first": "$date" },
-              }
-          }])
-          console.log(data);
-          if(data[0]){ return res.status(200).json({success: true,error: false,data: data})
-          }else{ return res.status(401).json({success: false,error: true,message: "No Data Found!"})}
-           
-          }else if(shop==="charging_station_id"){
-          const data = await Notificationdata.aggregate([{
-              '$lookup': {
-                  'from': 'user_tbs',
-                  'localField': 'user_id',
-                  'foreignField': '_id',
-                  'as': 'user'
-              }
-          },
-          {"$unwind": "$user"},  
-          {"$match":{
-                 'charging_station_id' : ObjectId(id)
-              }
-          },
-          {"$group": {
-                  "_id": "$_id",
-                  "name": { "$first": "$user.name" },
-                  "phone_no": { "$first": "$user.phone_no" },
                   "notification": { "$first": "$notification" },
-                  "date": { "$first": "$date" },
               }
-          }])
-          if(data[0]){ return res.status(200).json({success: true,error: false,data: data})
-          }else{ return res.status(401).json({success: false,error: true,message: "No Data Found!"})}
-      }else if(shop==="service_station_id"){
-          const data = await Notificationdata.aggregate([{
-              '$lookup': {
-                  'from': 'user_tbs',
-                  'localField': 'user_id',
-                  'foreignField': '_id',
-                  'as': 'user'
-              }
-          },
-          {"$unwind": "$user"},  
-          {"$match":{
-                 'service_station_id' : ObjectId(id)
-              }
-          },
-          {"$group": {
-                  "_id": "$_id",
-                  "name": { "$first": "$user.name" },
-                  "phone_no": { "$first": "$user.phone_no" },
-                  "notification": { "$first": "$notification" },
-                  "date": { "$first": "$date" },
-              }
-          }])
-          if(data[0]){ return res.status(200).json({success: true,error: false,data: data})
-          }else{ return res.status(401).json({success: false,error: true,message: "No Data Found!"})}
-      }
-      
-    } catch (error) {
+          }
+        ])
+         res.json({data})
+         
+      }catch (error) {
       return res.status(401).json({success: false,error: true,message: error})
     }
   
