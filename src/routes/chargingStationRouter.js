@@ -114,11 +114,11 @@ ChargeRouter.post('/slot-booking', async(req, res) => {
         const oldData = await booking.findOne({ time: req.body.time, date: req.body.date,status:0,slot_no: req.body.slot_no });
         console.log(oldData);
         if (oldData) {
-            const update = await slot.updateOne({ charging_station_id: req.body.charging_station_id,slot_no: req.body.slot_no },{$set:{status:'Busy'}});
             return res.status(400).json({ success: false, error: true, message: "Time not available" });
         }
         const result = await booking(bookingData).save()
         if (result) {
+            const update = await slot.updateOne({ charging_station_id: req.body.charging_station_id,slot_no: req.body.slot_no },{$set:{status:'Busy'}});
             res.status(201).json({ success: true, error: false, message: "slot booked ", details: result });
         }
     }catch(err) {
