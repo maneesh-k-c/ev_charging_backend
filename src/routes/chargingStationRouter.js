@@ -281,20 +281,24 @@ ChargeRouter.get('/booked-single-slots-user/:id', async (req, res) => {
 ChargeRouter.post('/add-slot', async (req, res) => {
 
     try {
-        const oldSlot = await slot.findOne({ charging_station_id: req.body.charging_station_id });
+        const oldSlot = await slot.find({ charging_station_id: req.body.charging_station_id });
         if (oldSlot) {
-            if (oldSlot.slot_no === req.body.slot_no) {
+            const od= oldSlot.filter((data)=>{
+                return data.slot_no == req.body.slot_no
+            })
+            if (od[0]) {
                 return res.status(400).json({ success: false, error: true, message: "Slot already exists" });
             }
-        }
-        var data = { charging_station_id: req.body.charging_station_id, slot_no: req.body.slot_no, status: 'Available' }
+            var data = { charging_station_id: req.body.charging_station_id, slot_no: req.body.slot_no,amount:req.body.amount, status: 'Available' }
         const result = await slot(data).save()
         if (result) {
             return res.status(200).json({ success: true, error: false, message: "Slot added" });
         }
+        }
+        
     } catch (error) {
-        return res.status(400).json({ success: false, error: true, message: "Something went wrong" });
-    }
+        return res.status(400).json({ success: false, error: true, message: "Something went wrong" });
+    }
 })
 
 ChargeRouter.get('/view-slots/:id', async (req, res) => {

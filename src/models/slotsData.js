@@ -5,6 +5,7 @@ const Schema = mongoose.Schema
 const SlotSchema = new Schema({
      charging_station_id:{ type: Schema.Types.ObjectId, ref: "charging_station_tb", required: true },
      slot_no:{ type: String, required: true },
+     amount:{ type: String, required: true },
      status:{ type: String, required: true },      
        
 })
