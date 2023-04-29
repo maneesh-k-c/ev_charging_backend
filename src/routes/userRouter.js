@@ -100,9 +100,9 @@ userRouter.get('/view-notification/:id', async(req, res) => {
 userRouter.post('/add-complaint-battery-shop', async (req, res) => {
 
     try {
-        const { login_id, date, complaint, vattery_shop_id } = req.body
+        const { login_id, date, complaint, battery_shop_id } = req.body
 
-        const result = await Complaintbattery.create({ login_id, date, complaint, vattery_shop_id })
+        const result = await Complaintbattery.create({ login_id, date, complaint, battery_shop_id })
         if (result) {
             res.status(201).json({ success: true, error: false, message: "Complaint Added", details: result });
         }
